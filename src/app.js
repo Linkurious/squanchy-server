@@ -3,6 +3,7 @@ var https = require('https');
 
 var express = require('express');
 var serveIndex = require('serve-index');
+var basicAuth = require('basic-auth');
 
 const FILES_ROOT_PATH = path.join(__dirname, '..', 'files'),
       CONFIG_PATH = path.join(__dirname, '..', 'config.json'),
@@ -20,6 +21,16 @@ function start(config, credentials) {
       httpApp = express(),
       server = https.createServer(credentials, httpsApp);
 
+  httpsApp.use('*', function (req, res, next) {
+    var user = basicAuth(req);
+
+    if (!user || user.name !== config.user || user.pass !== config.password) {
+      res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+      return res.sendStatus(401);
+    } else {
+      return next();
+    }
+  });
   httpsApp.use(express.static(FILES_ROOT_PATH));
   httpsApp.use('/', serveIndex(FILES_ROOT_PATH, {icons: true, hidden: true}));
 

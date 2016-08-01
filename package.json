@@ -1,9 +1,10 @@
 {
   "name": "dev-center",
   "version": "0.0.1",
-  "description": "Stores build/docs/artifacts related to Linkurious projects",
+  "description": "Stores builds/docs/artifacts of Linkurious projects",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js"
   },
   "license": "CC-BY-NC-3.0",
   "repository": {
@@ -16,6 +17,7 @@
   },
   "homepage": "https://github.com/Linkurious/dev-center#readme",
   "dependencies": {
+    "basic-auth": "^1.0.4",
     "express": "^4.14.0",
     "mkdirp": "^0.5.1",
     "pem": "^1.8.3",

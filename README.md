@@ -4,14 +4,14 @@
 
 Start the server by doing `npm start`.
 
-At the first start, a 'ssl' folder containing a certificate and key will be created.
+At the first start, a 'ssl' directory containing a certificate and key will be created.
 
 ## Configuration
 
-A JSON file names 'config.json' must be present in the root directory. It must contain the following fields:
+A JSON file named 'config.json' must be present in the project root directory. It must contain the following fields:
 
-* `user`: user to use for HTTPS authentication
-* `password`: password to use for HTTPS authentication
+* `user`: username to use for authentication.
+* `password`: password to use for authentication.
 
 The following fields are optional:
 

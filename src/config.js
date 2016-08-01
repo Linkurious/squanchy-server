@@ -1,41 +1,50 @@
 var fs = require('fs');
 var path = require('path');
 
-exports.load = function () {
-  var configFile, config, username, password, port;
+function err(msg, exitCode) {
+  console.log('\n\033[91mError: ' + msg + '.\033[0m');
+  process.exit(exitCode);
+}
+
+exports.load = function (configPath, callback) {
+  var configFile, config;
+
+  process.stdout.write(`Loading configuration from ${configPath}...`);
 
   try {
-    configFile = fs.readFileSync(path.join(__dirname, '..', 'config.json'));
+    configFile = fs.readFileSync(configPath);
   } catch (e) {
-    console.error('config.json not found.');
-    process.exit(1);
+    err(`file not found`, 1);
   }
 
   try {
     config = JSON.parse(configFile);
   } catch (e) {
-    console.error('config.json is not valid JSON.');
-    process.exit(2);
+    err('not valid JSON', 2);
   }
 
   if (typeof config.user !== 'string') {
-    console.error('config.json: the `user` property must be a string.');
-    process.exit(3);
+    err('the `user` property must be a string', 3);
   }
 
   if (typeof config.password !== 'string') {
-    console.error('config.json: the `password` property must be a string.');
-    process.exit(4);
+    err('the `password` property must be a string', 4);
   }
 
-  if (config.port !== undefined && typeof config.port !== 'number') {
-    console.error('config.json: the `port` property must be a number.');
-    process.exit(5);
+  if (config.http_port !== undefined && typeof config.http_port !== 'number') {
+    err('the `http_port` property must be a number', 5);
   }
 
-  return {
+  if (config.https_port !== undefined && typeof config.https_port !== 'number') {
+    err('the `https_port` property must be a number', 6);
+  }
+
+  console.log(' Ok.');
+
+  callback({
     user: config.user,
     password: config.password,
-    port: config.port || 3001
-  };
+    http_port: config.http_port || 80,
+    https_port: config.https_port || 443
+  });
 };

@@ -1,7 +1,7 @@
 {
   "name": "dev-center",
   "version": "0.0.1",
-  "description": "",
+  "description": "Stores build/docs/artifacts related to Linkurious projects",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,5 +14,12 @@
   "bugs": {
     "url": "https://github.com/Linkurious/dev-center/issues"
   },
-  "homepage": "https://github.com/Linkurious/dev-center#readme"
+  "homepage": "https://github.com/Linkurious/dev-center#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "mkdirp": "^0.5.1",
+    "pem": "^1.8.3",
+    "serve-index": "^1.8.0",
+    "sleep": "^3.0.1"
+  }
 }

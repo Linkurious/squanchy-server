@@ -2,7 +2,6 @@ var fs = require('fs');
 var path = require('path');
 var pem = require('pem');
 var mkdirp = require('mkdirp');
-var sleep = require('sleep');
 
 exports.load = function (keyFile, certFile, callback) {
   var keyExists = fs.existsSync(keyFile),

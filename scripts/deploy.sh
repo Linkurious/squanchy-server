@@ -12,9 +12,7 @@ SALT='sand-castle'
 read -p "Enter HTTP username: " username
 read -s -p "Enter HTTP password: " password
 
-hash=`echo {$password}${SALT} | sha256sum`
-
-# write config
+hash=`echo -n ${password}${SALT} | sha256sum | head -c 64`
 
 echo "{\"user\":\"${username}\",\"password\":\"${hash}\",\"http_port\":8080,\"https_port\":4430,\"root\":\"/home/linkurious/data\"}"
 

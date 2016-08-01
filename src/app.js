@@ -32,13 +32,7 @@ function start(config, credentials) {
     var user = basicAuth(req);
 
     if (!user || user.name !== config.user || hash(user.pass) !== config.password) {
-      if (user) {
-        console.log(user.pass);
-        console.log(hash(user.pass));
-      }
-
       res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-
       return res.sendStatus(401);
     } else {
       return next();

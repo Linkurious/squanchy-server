@@ -39,12 +39,23 @@ exports.load = function (configPath, callback) {
     err('the `https_port` property must be a number', 6);
   }
 
+  if (config.root !== undefined && typeof config.root !== 'string') {
+    err('the `root` property must be a number', 6);
+  }
+
   console.log(' Ok.');
+
+  if (!config.root) config.root = 'files';
+
+  if (config.root.indexOf('/') !== 0) {
+    config.root = path.join(configPath, config.root);
+  }
 
   callback({
     user: config.user,
     password: config.password,
     http_port: config.http_port || 80,
-    https_port: config.https_port || 443
+    https_port: config.https_port || 443,
+    root: config.root
   });
 };

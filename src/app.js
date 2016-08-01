@@ -5,8 +5,7 @@ var express = require('express');
 var serveIndex = require('serve-index');
 var basicAuth = require('basic-auth');
 
-const FILES_ROOT_PATH = path.join(__dirname, '..', 'files'),
-      CONFIG_PATH = path.join(__dirname, '..', 'config.json'),
+const CONFIG_PATH = path.join(__dirname, '..', 'config.json'),
       SSL_KEY_PATH = path.join(__dirname, '..', 'ssl', 'key'),
       SSL_CERT_PATH = path.join(__dirname, '..', 'ssl', 'cert');
 
@@ -31,8 +30,8 @@ function start(config, credentials) {
       return next();
     }
   });
-  httpsApp.use(express.static(FILES_ROOT_PATH));
-  httpsApp.use('/', serveIndex(FILES_ROOT_PATH, {icons: true, hidden: true}));
+  httpsApp.use(express.static(config.root));
+  httpsApp.use('/', serveIndex(config.root, {icons: true, hidden: true}));
 
   httpApp.get('*', function (req, res) {
     var host = req.headers.host,
@@ -48,11 +47,13 @@ function start(config, credentials) {
     res.redirect(httpsUrl);
   });
 
-  httpApp.listen(config.http_port, function () {
-    console.log(`HTTP server running on port ${config.http_port}...`);
-  });
+  var count = 0;
+  function ready() {
+    if (++count === 2) {
+      console.log(`Serving files from ${config.root} [HTTP: ${config.http_port}] [HTTPS: ${config.https_port}]`);
+    }
+  }
 
-  server.listen(config.https_port, function () {
-    console.log(`HTTPS server running on port ${config.https_port}...`);
-  });
+  httpApp.listen(config.http_port, ready);
+  server.listen(config.https_port, ready);
 }

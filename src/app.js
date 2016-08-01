@@ -1,11 +1,13 @@
 var path = require('path');
 var https = require('https');
+var crypto = require('crypto');
 
 var express = require('express');
 var serveIndex = require('serve-index');
 var basicAuth = require('basic-auth');
 
-const CONFIG_PATH = path.join(__dirname, '..', 'config.json'),
+const SHA256_SALT = 'sand-castle',
+      CONFIG_PATH = path.join(__dirname, '..', 'config.json'),
       SSL_KEY_PATH = path.join(__dirname, '..', 'ssl', 'key'),
       SSL_CERT_PATH = path.join(__dirname, '..', 'ssl', 'cert');
 
@@ -15,6 +17,12 @@ require('./config.js').load(CONFIG_PATH, function (config) {
   });
 });
 
+function hash(password) {
+  var sum = crypto.createHash('sha256');
+  sum.update(password + SHA256_SALT);
+  return sum.digest('hex');
+}
+
 function start(config, credentials) {
   var httpsApp = express(),
       httpApp = express(),
@@ -23,8 +31,11 @@ function start(config, credentials) {
   httpsApp.use('*', function (req, res, next) {
     var user = basicAuth(req);
 
-    if (!user || user.name !== config.user || user.pass !== config.password) {
+    if (!user || user.name !== config.user || hash(user.pass) !== config.password) {
+      console.log(hash(user.pass));
+
       res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+
       return res.sendStatus(401);
     } else {
       return next();

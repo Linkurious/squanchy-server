@@ -40,7 +40,7 @@ exports.load = function (configPath, callback) {
   }
 
   if (config.root !== undefined && typeof config.root !== 'string') {
-    err('the `root` property must be a number', 6);
+    err('the `root` property must be a string', 6);
   }
 
   console.log(' Ok.');

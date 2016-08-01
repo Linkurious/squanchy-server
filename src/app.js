@@ -38,7 +38,7 @@ function start(config, credentials) {
         index = host.indexOf(':'),
         httpsUrl = 'https://' + host.substr(0, index !== -1 ? index : host.length);
 
-    if (config.https_port !== 443) {
+    if (index !== -1) {
       httpsUrl += ':' + config.https_port;
     }
 

@@ -59,10 +59,10 @@ function start(config, credentials) {
   }
 
   httpsApp.use(express.static(config.root));
-  httpsApp.use('/', serveIndex(config.root, {icons: true, hidden: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
+  httpsApp.use('/', serveIndex(config.root, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
 
   httpApp.use(express.static(config.root));
-  httpApp.use('/', serveIndex(config.root, {icons: true, hidden: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
+  httpApp.use('/', serveIndex(config.root, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
 
   //httpApp.get('*', redirect);
 

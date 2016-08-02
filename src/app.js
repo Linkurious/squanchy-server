@@ -14,8 +14,12 @@ const SHA256_SALT = 'sand-castle',
       SSL_KEY_PATH = path.join(__dirname, '..', 'ssl', 'key.pem'),
       SSL_CERT_PATH = path.join(__dirname, '..', 'ssl', 'cert.pem');
 
+var __config;
+
 require('./config.js').load(CONFIG_PATH, function (config) {
   require('./ssl.js').load(SSL_KEY_PATH, SSL_CERT_PATH, function (credentials) {
+    __config = config;
+
     start(config, credentials);
   });
 });
@@ -32,7 +36,7 @@ function redirect(req, res) {
     httpsUrl = 'https://' + host.substr(0, index !== -1 ? index : host.length);
 
   if (index !== -1) {
-    httpsUrl += ':' + config.https_port;
+    httpsUrl += ':' + __config.https_port;
   }
 
   httpsUrl += req.url;
@@ -63,7 +67,7 @@ function start(config, credentials) {
   httpsApp.use(express.static(config.root));
   httpsApp.use('/', serveIndex(config.root, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
 
-  httpApp.use('.well-known/*', express.static(config.root));
+  httpApp.use('/.well-known', express.static(config.root + '/.well-known'));
   httpApp.get('*', redirect);
 
   var count = 0;

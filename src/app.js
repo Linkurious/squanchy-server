@@ -26,6 +26,20 @@ function hash(password) {
   return sum.digest('hex');
 }
 
+function redirect(req, res) {
+  var host = req.headers.host,
+    index = host.indexOf(':'),
+    httpsUrl = 'https://' + host.substr(0, index !== -1 ? index : host.length);
+
+  if (index !== -1) {
+    httpsUrl += ':' + config.https_port;
+  }
+
+  httpsUrl += req.url;
+
+  res.redirect(httpsUrl);
+}
+
 function start(config, credentials) {
   var httpsApp = express(),
       httpApp = express(),
@@ -47,19 +61,10 @@ function start(config, credentials) {
   httpsApp.use(express.static(config.root));
   httpsApp.use('/', serveIndex(config.root, {icons: true, hidden: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
 
-  httpApp.get('*', function (req, res) {
-    var host = req.headers.host,
-        index = host.indexOf(':'),
-        httpsUrl = 'https://' + host.substr(0, index !== -1 ? index : host.length);
+  httpApp.use(express.static(config.root));
+  httpApp.use('/', serveIndex(config.root, {icons: true, hidden: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
 
-    if (index !== -1) {
-      httpsUrl += ':' + config.https_port;
-    }
-
-    httpsUrl += req.url;
-
-    res.redirect(httpsUrl);
-  });
+  //httpApp.get('*', redirect);
 
   var count = 0;
   function ready() {

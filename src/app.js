@@ -45,26 +45,26 @@ function start(config, credentials) {
       httpApp = express(),
       server = https.createServer(credentials, httpsApp);
 
-  if (config.password !== '') {
-    httpsApp.use('*', function (req, res, next) {
-      var user = basicAuth(req);
+  function auth(req, res, next) {
+    var user = basicAuth(req);
 
-      if (!user || user.name !== config.user || hash(user.pass) !== config.password) {
-        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-        return res.sendStatus(401);
-      } else {
-        return next();
-      }
-    });
+    if (!user || user.name !== config.user || hash(user.pass) !== config.password) {
+      res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+      return res.sendStatus(401);
+    } else {
+      return next();
+    }
+  }
+
+  if (config.password !== '') {
+    httpsApp.use('*', auth);
   }
 
   httpsApp.use(express.static(config.root));
   httpsApp.use('/', serveIndex(config.root, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
 
-  httpApp.use(express.static(config.root));
-  httpApp.use('/', serveIndex(config.root, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
-
-  //httpApp.get('*', redirect);
+  httpApp.use('.well-known/*', express.static(config.root));
+  httpApp.get('*', redirect);
 
   var count = 0;
   function ready() {

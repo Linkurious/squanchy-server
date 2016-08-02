@@ -4,7 +4,7 @@ echo
 read -s -p "Confirm password: " confirm
 echo
 
-if [ $password != $confirm ] ; then
+if [[ $password != $confirm ]] ; then
   echo -e "\e[91mPassword mismatch.\e[0m"
   exit 1
 fi

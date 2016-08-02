@@ -9,10 +9,4 @@ git clone https://github.com/Linkurious/dev-center.git
 mkdir data
 cd dev-center
 
-read -p "Enter HTTP username: " username
-read -s -p "Enter HTTP password: " password
-echo
-read -s -p "Confirm password: " confirm
-echo
-
 npm install

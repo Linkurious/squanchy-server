@@ -1,3 +1,6 @@
+# Clone the git repo, configure and start it
+# Must be run as regular user
+
 git clone https://github.com/Linkurious/dev-center.git
 
 mkdir data

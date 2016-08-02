@@ -1,3 +1,6 @@
+# Install some useful stuff on the machine
+# Must be run as root
+
 aptitude install -y vim git npm htop tree screen
 npm install -g n
 n 4.4.4

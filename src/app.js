@@ -67,7 +67,7 @@ function start(config, credentials) {
   httpsApp.use(express.static(config.root));
   httpsApp.use('/', serveIndex(config.root, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
 
-  httpApp.use('/.well-known', express.static(config.root + '/.well-known'));
+  httpApp.use('/.well-known', express.static(path.join(__dirname, '..', '.well-known')));
   httpApp.get('*', redirect);
 
   var count = 0;

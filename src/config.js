@@ -48,7 +48,7 @@ exports.load = function (configPath, callback) {
   if (!config.root) config.root = 'files';
 
   if (config.root.indexOf('/') !== 0) {
-    config.root = path.join(configPath, config.root);
+    config.root = path.join(path.dirname(configPath), config.root);
   }
 
   callback({

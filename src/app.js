@@ -1,12 +1,15 @@
 var path = require('path');
 var https = require('https');
 var crypto = require('crypto');
+var fs = require('fs');
 
 var express = require('express');
 var serveIndex = require('serve-index');
 var basicAuth = require('basic-auth');
 
 const SHA256_SALT = 'sand-castle',
+      TEMPLATE_PATH = path.join(__dirname, 'template.html'),
+      STYLESHEET_PATH = path.join(__dirname, 'style.css'),
       CONFIG_PATH = path.join(__dirname, '..', 'config.json'),
       SSL_KEY_PATH = path.join(__dirname, '..', 'ssl', 'key'),
       SSL_CERT_PATH = path.join(__dirname, '..', 'ssl', 'cert');
@@ -28,18 +31,21 @@ function start(config, credentials) {
       httpApp = express(),
       server = https.createServer(credentials, httpsApp);
 
-  httpsApp.use('*', function (req, res, next) {
-    var user = basicAuth(req);
+  if (config.password !== '') {
+    httpsApp.use('*', function (req, res, next) {
+      var user = basicAuth(req);
 
-    if (!user || user.name !== config.user || hash(user.pass) !== config.password) {
-      res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-      return res.sendStatus(401);
-    } else {
-      return next();
-    }
-  });
+      if (!user || user.name !== config.user || hash(user.pass) !== config.password) {
+        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+        return res.sendStatus(401);
+      } else {
+        return next();
+      }
+    });
+  }
+
   httpsApp.use(express.static(config.root));
-  httpsApp.use('/', serveIndex(config.root, {icons: true, hidden: true}));
+  httpsApp.use('/', serveIndex(config.root, {icons: true, hidden: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
 
   httpApp.get('*', function (req, res) {
     var host = req.headers.host,

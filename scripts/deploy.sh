@@ -6,10 +6,11 @@ iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 4430
 
 git clone https://github.com/Linkurious/dev-center.git
 
-mkdir data
 cd dev-center
 
-./scripts/write_config.sh
+bash scripts/write_config.sh
 
 npm install
+
+mkdir data
 npm start

@@ -23,5 +23,5 @@ is considered relative to the root directory of the project. Default: 'files'.
 ## One-command deployment
 
 ```bash
-wget https://github.com/Linkurious/dev-center/archive/master.zip && unzip master.zip && ./dev-center-master/scripts/deploy.sh
+wget -O - https://raw.githubusercontent.com/Linkurious/dev-center/master/scripts/deploy.sh | bash
 ```

@@ -20,8 +20,16 @@ The following fields are optional:
 * `root`: path to the directory from which the static files must be served. If it doesn't start with '/', the path
 is considered relative to the root directory of the project. Default: 'files'.
 
-## One-command deployment
+## Commands for deployment
+
+As root:
 
 ```bash
-wget -O - https://raw.githubusercontent.com/Linkurious/dev-center/master/scripts/deploy.sh | bash
+wget -O /tmp/prepare.sh https://raw.githubusercontent.com/Linkurious/dev-center/master/scripts/prepare.sh && bash /tmp/prepare.sh
+```
+
+Then as regular user:
+
+```bash
+wget -O /tmp/deploy.sh https://raw.githubusercontent.com/Linkurious/dev-center/master/scripts/deploy.sh && bash /tmp/deploy.sh
 ```

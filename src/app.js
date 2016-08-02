@@ -11,8 +11,8 @@ const SHA256_SALT = 'sand-castle',
       TEMPLATE_PATH = path.join(__dirname, 'template.html'),
       STYLESHEET_PATH = path.join(__dirname, 'style.css'),
       CONFIG_PATH = path.join(__dirname, '..', 'config.json'),
-      SSL_KEY_PATH = path.join(__dirname, '..', 'ssl', 'key'),
-      SSL_CERT_PATH = path.join(__dirname, '..', 'ssl', 'cert');
+      SSL_KEY_PATH = path.join(__dirname, '..', 'ssl', 'key.pem'),
+      SSL_CERT_PATH = path.join(__dirname, '..', 'ssl', 'cert.pem');
 
 require('./config.js').load(CONFIG_PATH, function (config) {
   require('./ssl.js').load(SSL_KEY_PATH, SSL_CERT_PATH, function (credentials) {

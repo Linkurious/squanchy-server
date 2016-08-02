@@ -20,3 +20,8 @@ The following fields are optional:
 * `root`: path to the directory from which the static files must be served. If it doesn't start with '/', the path
 is considered relative to the root directory of the project. Default: 'files'.
 
+## One-command deployment
+
+```bash
+wget https://github.com/Linkurious/dev-center/archive/master.zip && unzip master.zip && ./dev-center-master/scripts/deploy.sh
+```

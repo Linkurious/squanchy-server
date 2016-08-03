@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Install some useful stuff on the machine
 # Must be run as root
 

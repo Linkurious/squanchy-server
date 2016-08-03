@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Clone the git repo, configure and start it
 # Must be run as regular user
 

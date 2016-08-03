@@ -64,10 +64,10 @@ function start(config, credentials) {
     httpsApp.use('*', auth);
   }
 
-  httpsApp.use(express.static(config.root, {hidden: true}));
+  httpsApp.use(express.static(config.root, {dotfiles: 'allow'}));
   httpsApp.use('/', serveIndex(config.root, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
 
-  httpApp.use('/.well-known', express.static(path.join(__dirname, '..', '.well-known'), {hidden: true}));
+  httpApp.use('/.well-known', express.static(path.join(__dirname, '..', '.well-known'), {dotfiles: 'allow'}));
   httpApp.get('*', redirect);
 
   var count = 0;

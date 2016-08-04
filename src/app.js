@@ -32,8 +32,8 @@ function hash(password) {
 
 function redirect(req, res) {
   var host = req.headers.host,
-    index = host.indexOf(':'),
-    httpsUrl = 'https://' + host.substr(0, index !== -1 ? index : host.length);
+      index = host.indexOf(':'),
+      httpsUrl = 'https://' + host.substr(0, index !== -1 ? index : host.length);
 
   if (index !== -1) {
     httpsUrl += ':' + __config.https_port;

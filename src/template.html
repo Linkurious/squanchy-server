@@ -70,21 +70,23 @@
 </div>
 </body>
 <script>
-  var files = $('files'),
+  if (location.pathname === '/ogma/') {
+    var files = $('files'),
       reversed = [];
 
-  for (var i = 0; i < files.children.length; ++i) {
-    reversed.push(files.children[files.children.length - i - 1]);
-  }
+    for (var i = 0; i < files.children.length; ++i) {
+      reversed.push(files.children[files.children.length - i - 1]);
+    }
 
-  if (reversed[reversed.length-1].firstChild.firstChild.innerHTML === '..') {
-    reversed.unshift(reversed.pop());
-  }
+    if (reversed[reversed.length-1].firstChild.firstChild.innerHTML === '..') {
+      reversed.unshift(reversed.pop());
+    }
 
-  while (files.firstChild) files.removeChild(files.firstChild);
+    while (files.firstChild) files.removeChild(files.firstChild);
 
-  for (i = 0; i < reversed.length; ++i) {
-    files.appendChild(reversed[i]);
+    for (i = 0; i < reversed.length; ++i) {
+      files.appendChild(reversed[i]);
+    }
   }
 </script>
 </html>

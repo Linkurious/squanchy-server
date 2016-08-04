@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Generate a certificate form Let's encrypt and replace the self-generated with it.
 # Must be run as root while the server is running, in the dev-center directory
 

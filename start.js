@@ -2,6 +2,7 @@
   const path = require('path');
   const fs = require('fs');
   const startApp = require('./src/app');
+  const initNginx = require('./src/init_nginx');
   const C = require('./src/config');
 
   function mkdir(dirPath) {
@@ -9,6 +10,8 @@
       fs.mkdirSync(dirPath);
     }
   }
+
+  initNginx();
 
   mkdir(C.ROOT);
   mkdir(C.SSL_DIR);

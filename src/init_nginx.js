@@ -36,22 +36,36 @@
   }
 
   module.exports = function () {
-    if (!fs.existsSync(C.NGINX_CONFIG_PATH)) {
-      exec(() => fs.writeFileSync(C.NGINX_CONFIG_PATH, generateNginxConfig()), 'nginx configuration file not found, generating it...');
+
+    // Add the user used by nginx if it doesn't exist
+    var userExists = exec(`cat /etc/passwd | { grep "^${C.NGINX_USER}:" || true; }`);
+
+    if (!userExists) {
+      exec(`adduser --system --no-create-home ${C.NGINX_USER}`, `Adding user ${C.NGINX_USER}...`);
     }
 
+    // Add the iptable rule to redirect port 80 to nginx port if doesn't exist
     var ruleExists = exec(`iptables -t nat -L PREROUTING --line-numbers | { grep "tcp dpt:http redir ports ${C.NGINX_PORT}" || true; }`);
 
     if (!ruleExists) {
       exec(`iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port ${C.NGINX_PORT}`, `Adding iptable rule to redirect port 80 on port ${C.NGINX_PORT}...`);
     }
 
+    // Generate nginx configuration
+    exec(() => fs.writeFileSync(C.NGINX_CONFIG_PATH, generateNginxConfig()), 'Generating nginx configuration...');
+
+    // Start nginx if it's not already running
     var nginxRunning = exec('ps waux | grep "nginx: master process"').split('\n').filter(line => line.indexOf('grep') === -1).length;
 
     if (nginxRunning) {
-      console.log('nginx is already running.');
-    } else {
-      exec(`nginx -c ${C.NGINX_CONFIG_PATH}`, 'Starting nginx...');
+      exec(`nginx -s stop`, 'Stopping nginx...');
     }
+
+    exec(`nginx -c ${C.NGINX_CONFIG_PATH}`, 'Starting nginx...');
+
+    process.on('SIGINT', function () {
+      exec(`nginx -s stop`, '\nStopping nginx...');
+      process.exit();
+    });
   };
 })();

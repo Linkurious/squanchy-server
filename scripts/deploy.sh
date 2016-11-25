@@ -26,6 +26,6 @@ hash=`echo -n ${password}${SALT} | sha256sum | head -c 64`
 
 echo Writing config.json...
 
-echo "{\"user\":\"${username}\",\"password\":\"${hash}\",\"http_port\":8080,\"https_port\":4430,\"root\":\"/home/linkurious/data\"}" > config.json
+echo "{\"user\":\"${username}\",\"password\":\"${hash}\",\"http_port\":8080,\"https_port\":4430,\"data_root\":\"/home/linkurious/data\",\"ogma_doc_root\":\"/home/linkurious/ogma-doc\"}" > config.json
 
 npm start

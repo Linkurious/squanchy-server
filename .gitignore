@@ -1,6 +1,2 @@
 .idea/*
 node_modules/*
-files/*
-ssl/*
-config.json
-.well-known/*

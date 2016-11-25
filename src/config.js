@@ -6,6 +6,7 @@
 
   var C = {
     ROOT: ROOT,
+    NGINX_CONFIG_PATH: path.join(ROOT, '.nginx.conf'),
     NGINX_PORT: config.nginx_port,
     NGINX_USER: config.nginx_user,
     ROOT_DOMAIN: config.dns_suffix,

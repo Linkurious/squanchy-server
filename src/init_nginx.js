@@ -52,19 +52,19 @@
     }
 
     // Generate nginx configuration
-    exec(() => fs.writeFileSync(C.NGINX_CONFIG_PATH, generateNginxConfig()), 'Generating nginx configuration...');
+    exec(() => { fs.writeFileSync(C.NGINX_CONFIG_PATH, generateNginxConfig()); fs.chownSync(C.NGINX_CONFIG_PATH, C.UID, C.GID); }, 'Generating Nginx configuration...');
 
     // Start nginx if it's not already running
     var nginxRunning = exec('ps waux | grep "nginx: master process"').split('\n').filter(line => line.indexOf('grep') === -1).length;
 
     if (nginxRunning) {
-      exec(`nginx -s stop`, 'Stopping nginx...');
+      exec(`nginx -s stop`, 'Nginx is already running, stopping it...');
     }
 
-    exec(`nginx -c ${C.NGINX_CONFIG_PATH}`, 'Starting nginx...');
+    exec(`nginx -c ${C.NGINX_CONFIG_PATH}`, 'Starting Nginx...');
 
     process.on('SIGINT', function () {
-      exec(`nginx -s stop`, '\nStopping nginx...');
+      exec(`nginx -s stop`, '\nStopping Nginx...');
       process.exit();
     });
   };

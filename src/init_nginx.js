@@ -13,18 +13,36 @@
       `  worker_connections 1024;`,
       `}`,
       ``,
-      `http {`
+      `http {`,
+      `  server {`,
+      `    listen ${C.NGINX_HTTP_PORT} default_server;`,
+      `    server_name _;`,
+      `    return 301 https://$host$request_uri;`,
+      `  }`
     );
+
+    // server {
+    //   listen 80;
+    //   return 301 https://$host$request_uri;
+    //     }
 
     C.APP_LIST.forEach(app => {
       lines.push(
         ``,
         `  server {`,
-        `    listen *:${C.NGINX_PORT};`,
-        `    port_in_redirect off;`,
+        `    listen ${C.NGINX_HTTPS_PORT};`,
         `    server_name ${app.domain}.${C.ROOT_DOMAIN};`,
+        `    port_in_redirect off;`,
+        `    ssl on;`,
+        `    ssl_certificate ${C.SSL_CERT_PATH};`,
+        `    ssl_certificate_key ${C.SSL_KEY_PATH};`,
         `    location / {`,
         `      proxy_pass http://localhost:${app.port};`,
+        `      proxy_ssl_session_reuse on;`,
+        `      proxy_redirect off;`,
+        `      proxy_set_header   Host             $host;`,
+        `      proxy_set_header   X-Real-IP        $remote_addr;`,
+        `      proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;`,
         `    }`,
         `  }`
       );
@@ -45,10 +63,13 @@
     }
 
     // Add the iptable rule to redirect port 80 to nginx port if doesn't exist
-    var ruleExists = exec(`iptables -t nat -L PREROUTING --line-numbers | { grep "tcp dpt:http redir ports ${C.NGINX_PORT}" || true; }`);
+    var ruleExists = exec(`iptables -t nat -L PREROUTING --line-numbers | { grep "tcp dpt:http redir ports ${C.NGINX_HTTP_PORT}" || true; }`);
 
     if (!ruleExists) {
-      exec(`iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port ${C.NGINX_PORT}`, `Adding iptable rule to redirect port 80 on port ${C.NGINX_PORT}...`);
+      exec(`iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port ${C.NGINX_HTTP_PORT}`, `Adding iptable rule to redirect port 80 on port ${C.NGINX_HTTP_PORT}...`);
+      exec(`iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port ${C.NGINX_HTTPS_PORT}`, `Adding iptable rule to redirect port 443 on port ${C.NGINX_HTTPS_PORT}...`);
+      exec(`iptables -t nat -I OUTPUT -p tcp -o lo --dport 80 -j REDIRECT --to-port ${C.NGINX_HTTP_PORT}`, `Adding iptable rule to redirect port 80 on port ${C.NGINX_HTTP_PORT} (loopback)...`);
+      exec(`iptables -t nat -I OUTPUT -p tcp -o lo --dport 443 -j REDIRECT --to-port ${C.NGINX_HTTPS_PORT}`, `Adding iptable rule to redirect port 443 on port ${C.NGINX_HTTPS_PORT} (loopback)...`);
     }
 
     // Generate nginx configuration

@@ -1,13 +1,10 @@
 {
-  "nginx_port": 8000,
+  "nginx_starting_port": 8000,
   "nginx_user": "nginx",
   "nginx_root": "data",
   "ssl_dir": ".ssl",
   "credential_dir": ".credentials",
   "dns_suffix": "linkurio.us",
   "owner": "linkurious",
-  "apps": {
-    "dev": 8001,
-    "ogma": 8002
-  }
+  "apps": ["dev", "ogma"]
 }

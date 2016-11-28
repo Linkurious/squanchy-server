@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-nginx -s stop
-rm $HOME/dev-center-data/.nginx.conf
+rm $HOME/data/.nginx.conf
 iptables -t nat -D PREROUTING 1
+iptables -t nat -D PREROUTING 1
+iptables -t nat -D OUTPUT 1
+iptables -t nat -D OUTPUT 1
 deluser nginx

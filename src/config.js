@@ -3,12 +3,12 @@
   const config = require('../config.json');
   const userid = require('userid');
 
-  const ROOT = path.join(process.env['HOME'], config.nginx_root),
+  const ROOT = path.join(process.env['HOME'], config.nginx_root || 'www'),
         SSL_DIR = path.join(ROOT, config.ssl_dir || '.ssl'),
         PORT = config.nginx_starting_port || 8000;
 
   var C = {
-    ROOT: ROOT || 'www',
+    ROOT: ROOT,
     NGINX_CONFIG_PATH: path.join(ROOT, '.nginx.conf'),
     NGINX_HTTP_PORT: PORT,
     NGINX_HTTPS_PORT: PORT + 1,

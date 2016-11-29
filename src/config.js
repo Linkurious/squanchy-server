@@ -16,8 +16,8 @@
     NGINX_USER: config.nginx_user || 'nginx',
     ROOT_DOMAIN: config.dns_suffix,
     SSL_DIR: SSL_DIR,
-    SSL_CERT_PATH: path.join(SSL_DIR, 'cert.crt'),
-    SSL_KEY_PATH: path.join(SSL_DIR, 'cert.key'),
+    SSL_CERT_PATH: path.join(SSL_DIR, 'cert.pem'),
+    SSL_KEY_PATH: path.join(SSL_DIR, 'privkey.pem'),
     UID: userid.uid(OWNER),
     GID: userid.gid(OWNER),
     CREDENTIAL_DIR: path.join(ROOT, config.credential_dir || '.credentials'),
@@ -27,7 +27,7 @@
   var apps = config.apps || [];
 
   for (var i = 0; i < apps.length; ++i) {
-    C.APP_LIST.push({domain: apps[i], port: PORT + 2 + i})
+    C.APP_LIST.push({domain: apps[i], port: PORT + 2 + i, fullDomain: `${apps[i]}.${C.ROOT_DOMAIN}`})
   }
 
   module.exports = C;

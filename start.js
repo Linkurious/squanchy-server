@@ -3,6 +3,7 @@
   const fs = require('fs');
   const startApp = require('./src/app');
   const initNginx = require('./src/init_nginx');
+  const initSsl = require('./src/init_ssl');
   const C = require('./src/config');
 
   if (process.getuid() !== 0) {
@@ -22,6 +23,7 @@
   mkdir(C.SSL_DIR);
   mkdir(C.CREDENTIAL_DIR);
 
+  initSsl();
   initNginx();
 
   C.APP_LIST.forEach(app => {

@@ -34,6 +34,6 @@ The script expects a `config.json` file at the root. This file must contain the 
 
 Run `node add_user.js <sub-domain> <user> <password>`.
 
-* <sub-domain> must be a string registered in the `apps` field of the configuration
-* <user> can be any string
-* <password> is the password for this user. The password will be hashed.
+* `<sub-domain>` must be a string registered in the `apps` field of the configuration
+* `<user>` can be any string
+* `<password>` is the password for this user. The password will be hashed.

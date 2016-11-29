@@ -17,7 +17,7 @@
         user = argv[1],
         password = argv[2];
 
-  if (!C.APPS[subdomain]) {
+  if (!C.APPS.indexOf(subdomain) === -1) {
     exit(2, `sub-domain "${subdomain}" is not registered`);
   }
 

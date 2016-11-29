@@ -26,10 +26,11 @@
     UID: userid.uid(OWNER),
     GID: userid.gid(OWNER),
     CREDENTIAL_DIR: path.join(ROOT, config.credential_dir || '.credentials'),
+    APPS: config.apps,
     APP_LIST: []
   };
 
-  var apps = config.apps || [];
+  var apps = config.apps;
 
   for (var i = 0; i < apps.length; ++i) {
     C.APP_LIST.push({domain: apps[i], port: PORT + 2 + i, fullDomain: `${apps[i]}.${C.ROOT_DOMAIN}`})

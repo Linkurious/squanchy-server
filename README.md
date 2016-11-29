@@ -32,7 +32,7 @@ The script expects a `config.json` file at the root. This file must contain the 
 
 ## Adding a user for a specific domain name
 
-Run `node add_user.js <sub-domain> <user> <password>`.
+As the "owner", run `node add_user.js <sub-domain> <user> <password>`.
 
 * `<sub-domain>` must be a string registered in the `apps` field of the configuration
 * `<user>` can be any string

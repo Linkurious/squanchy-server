@@ -79,7 +79,7 @@
     });
   }
 
-  module.exports = function () {
+  module.exports = function (callback) {
 
     // Add the user used by nginx if it doesn't exist
     var userExists = exec(`cat /etc/passwd | { grep "^${C.NGINX_USER}:" || true; }`);
@@ -119,15 +119,17 @@
 
         console.log(stdout);
 
-        webroot.stop();
+        webroot.close();
         exec(`ln -s /etc/letsencrypt/live/${C.APP_LIST[0].fullDomain}/cert.pem ${C.SSL_CERT_PATH}`);
         exec(`ln -s /etc/letsencrypt/live/${C.APP_LIST[0].fullDomain}/privkey.pem ${C.SSL_KEY_PATH}`);
 
         startNginx();
+        callback();
       });
 
     } else {
       startNginx();
+      callback();
     }
   };
 })();

@@ -22,12 +22,12 @@
   mkdir(C.SSL_DIR);
   mkdir(C.CREDENTIAL_DIR);
 
-  initNginx();
+  initNginx(() => {
+    C.APP_LIST.forEach(app => {
+      var rootDir = path.join(C.ROOT, app.domain);
 
-  C.APP_LIST.forEach(app => {
-    var rootDir = path.join(C.ROOT, app.domain);
-
-    mkdir(rootDir);
-    startApp(app.domain, rootDir, app.port);
+      mkdir(rootDir);
+      startApp(app.domain, rootDir, app.port);
+    });
   });
 })();

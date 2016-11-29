@@ -1,10 +1,10 @@
 {
   "name": "dev-center",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Stores builds/docs/artifacts of Linkurious projects",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/app.js"
+    "start": "node start.js"
   },
   "license": "CC-BY-NC-3.0",
   "repository": {
@@ -19,8 +19,6 @@
   "dependencies": {
     "basic-auth": "^1.0.4",
     "express": "^4.14.0",
-    "mkdirp": "^0.5.1",
-    "pem": "^1.8.3",
     "serve-index": "^1.8.0",
     "userid": "^0.2.0"
   }

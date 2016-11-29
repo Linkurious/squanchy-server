@@ -3,7 +3,8 @@
   const config = require('../config.json');
   const userid = require('userid');
 
-  const ROOT = path.join(process.env['HOME'], config.nginx_root || 'www'),
+  const OWNER = config.owner || 'root',
+        ROOT = path.join(OWNER === 'root' ? '/root' : `/home/${OWNER}`, config.nginx_root || 'www'),
         SSL_DIR = path.join(ROOT, config.ssl_dir || '.ssl'),
         PORT = config.nginx_starting_port || 8000;
 
@@ -17,8 +18,8 @@
     SSL_DIR: SSL_DIR,
     SSL_CERT_PATH: path.join(SSL_DIR, 'cert.crt'),
     SSL_KEY_PATH: path.join(SSL_DIR, 'cert.key'),
-    UID: userid.uid(config.owner || 'root'),
-    GID: userid.gid(config.owner || 'root'),
+    UID: userid.uid(OWNER),
+    GID: userid.gid(OWNER),
     CREDENTIAL_DIR: path.join(ROOT, config.credential_dir || '.credentials'),
     APP_LIST: []
   };

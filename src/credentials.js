@@ -35,6 +35,14 @@
         credentials = tryRequire(filePath);
 
     credentials[username] = hash(password);
-    fs.writeFileSync(filePath, JSON.stringify(credentials), 'utf8');
+    fs.writeFileSync(filePath, JSON.stringify(credentials, null, ' '), 'utf8');
   };
+
+  exports.remove = function (subdomain, username) {
+    var filePath = getCredentialsFilePath(subdomain),
+        credentials = tryRequire(filePath);
+
+    credentials[username] = undefined;
+    fs.writeFileSync(filePath, JSON.stringify(credentials, null, ' '), 'utf8');
+  }
 })();

@@ -8,6 +8,10 @@
         SSL_DIR = path.join(ROOT, config.ssl_dir || '.ssl'),
         PORT = config.nginx_starting_port || 8000;
 
+  if (typeof config.dns_suffix !== 'string') throw new TypeError('Missing field "dns_suffix" in configuration.');
+  if (typeof config.email !== 'string') throw new TypeError('Missing field "email" in configuration.');
+  if (!(config.apps instanceof Array) || !config.apps.length) throw new TypeError('Field "apps" in configuration should be a non-empty array of strings.');
+
   var C = {
     ROOT: ROOT,
     NGINX_CONFIG_PATH: path.join(ROOT, '.nginx.conf'),
@@ -18,6 +22,7 @@
     SSL_DIR: SSL_DIR,
     SSL_CERT_PATH: path.join(SSL_DIR, 'cert.pem'),
     SSL_KEY_PATH: path.join(SSL_DIR, 'privkey.pem'),
+    EMAIL: config.email,
     UID: userid.uid(OWNER),
     GID: userid.gid(OWNER),
     CREDENTIAL_DIR: path.join(ROOT, config.credential_dir || '.credentials'),

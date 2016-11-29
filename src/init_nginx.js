@@ -1,5 +1,7 @@
 (function () {
   const fs = require('fs');
+  const http = require('http');
+  const express = require('express');
   const exec = require('./utility').exec;
   const C = require('./config');
 
@@ -53,6 +55,13 @@
     return lines.join('\n');
   }
 
+  function startWebRootServer(dir, port) {
+    var app = express();
+
+    app.use(express.static(dir, {dotfiles: 'allow'}));
+    return app.listen(port);
+  }
+
   module.exports = function () {
 
     // Add the user used by nginx if it doesn't exist
@@ -70,6 +79,22 @@
       exec(`iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port ${C.NGINX_HTTPS_PORT}`, `Adding iptable rule to redirect port 443 on port ${C.NGINX_HTTPS_PORT}...`);
       exec(`iptables -t nat -I OUTPUT -p tcp -o lo --dport 80 -j REDIRECT --to-port ${C.NGINX_HTTP_PORT}`, `Adding iptable rule to redirect port 80 on port ${C.NGINX_HTTP_PORT} (loopback)...`);
       exec(`iptables -t nat -I OUTPUT -p tcp -o lo --dport 443 -j REDIRECT --to-port ${C.NGINX_HTTPS_PORT}`, `Adding iptable rule to redirect port 443 on port ${C.NGINX_HTTPS_PORT} (loopback)...`);
+    }
+
+    // Generate SSL certificate if it does not exist
+    if (!fs.existsSync(C.SSL_CERT_PATH) || !fs.existsSync(C.SSL_KEY_PATH)) {
+      console.log('No certificate found, generating one using certbot...');
+
+      var webroot = startWebRootServer(C.SSL_DIR, C.NGINX_HTTP_PORT);
+
+      var cmd = `certbot certonly -n --agree-tos --email ${C.EMAIL} --webroot -w ${C.SSL_DIR}`;
+      C.APP_LIST.forEach(app => cmd += ` -d ${app.fullDomain}`);
+      exec(cmd);
+
+      webroot.stop();
+
+      exec(`ln -s /etc/letsencrypt/live/${C.APP_LIST[0].fullDomain}/cert.pem ${C.SSL_CERT_PATH}`);
+      exec(`ln -s /etc/letsencrypt/live/${C.APP_LIST[0].fullDomain}/privkey.pem ${C.SSL_KEY_PATH}`);
     }
 
     // Generate nginx configuration

@@ -13,9 +13,9 @@
   }
 
   function tryRequire(filePath) {
-    try {
-      return require(filePath);
-    } catch (e) {
+    if (fs.existsSync(filePath)) {
+      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    } else {
       return {};
     }
   }

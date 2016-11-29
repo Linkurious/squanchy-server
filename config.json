@@ -1,5 +1,6 @@
 {
   "dns_suffix": "linkurio.us",
   "owner": "linkurious",
+  "email": "web@linkurio.us",
   "apps": ["dev", "ogma"]
 }

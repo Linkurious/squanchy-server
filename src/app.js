@@ -11,7 +11,7 @@ const credentials = require('./credentials');
 const TEMPLATE_PATH = path.join(__dirname, 'template.html'),
       STYLESHEET_PATH = path.join(__dirname, 'style.css');
 
-function app(subdomain, rootDirectory, port) {
+function app(subdomain, rootDirectory, port, allowExternalPorts) {
   var httpApp = express();
 
   function auth(req, res, next) {
@@ -29,7 +29,7 @@ function app(subdomain, rootDirectory, port) {
   httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));
   httpApp.use('/', serveIndex(rootDirectory, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
 
-  httpApp.listen(port, 'localhost');
+  httpApp.listen(port, allowExternalPorts ? undefined : 'localhost');
 
   console.log(`Serving files from ${rootDirectory} on port ${port}...`);
 }

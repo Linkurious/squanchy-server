@@ -1,38 +1,18 @@
-var fs = require('fs');
-var path = require('path');
-var pem = require('pem');
-var mkdirp = require('mkdirp');
+(function () {
+  const fs = require('fs');
+  const express = require('express');
+  const exec = require('./utility').exec;
+  const C = require('./config');
 
-exports.load = function (keyFile, certFile, callback) {
-  var keyExists = fs.existsSync(keyFile),
-      certExists = fs.existsSync(certFile);
+  function startWebRootServer(dir) {
+    var httpApp = express();
+    httpApp.use(express.static(dir, {dotfiles: 'allow'}));
+    httpApp.listen(C.NGINX_HTTP_PORT);
 
-  var key, cert;
-
-  if (!keyExists || !certExists) {
-    process.stdout.write('Generating SSL certificate...');
-
-    mkdirp(path.dirname(keyFile));
-    mkdirp(path.dirname(certFile));
-
-    pem.createCertificate({days: 365, selfSigned: true}, (err, keys) => {
-      fs.writeFileSync(keyFile, keys.serviceKey, {encoding: 'utf8'});
-      fs.writeFileSync(certFile, keys.certificate, {encoding: 'utf8'});
-
-      key = keys.serviceKey;
-      cert = keys.certificate;
-
-      console.log(' Ok.');
-      callback({ key, cert });
-    });
-
-  } else {
-    process.stdout.write('Loading SSL certificate...');
-
-    key = fs.readFileSync(keyFile);
-    cert = fs.readFileSync(certFile);
-
-    console.log(' Ok.');
-    callback({ key, cert });
+    return httpApp;
   }
-};
+
+  if (!fs.existsSync(C.SSL_CERT_PATH) || !fs.existsSync(C.SSL_KEY_PATH)) {
+    var webroot = startWebRootServer(C.SSL_DIR);
+  }
+})();

@@ -3,6 +3,7 @@
   const http = require('http');
   const express = require('express');
   const exec = require('./utility').exec;
+  const execAsync = require('child_process').exec;
   const C = require('./config');
 
   function generateNginxConfig() {
@@ -62,6 +63,22 @@
     return app.listen(port);
   }
 
+  function startNginx() {
+    // Start nginx if it's not already running
+    var nginxRunning = exec('ps waux | grep "nginx: master process"').split('\n').filter(line => line.indexOf('grep') === -1).length;
+
+    if (nginxRunning) {
+      exec(`nginx -s stop`, 'Nginx is already running, stopping it...');
+    }
+
+    exec(`nginx -c ${C.NGINX_CONFIG_PATH}`, 'Starting Nginx...');
+
+    process.on('SIGINT', function () {
+      exec(`nginx -s stop`, '\nStopping Nginx...');
+      process.exit();
+    });
+  }
+
   module.exports = function () {
 
     // Add the user used by nginx if it doesn't exist
@@ -81,6 +98,9 @@
       exec(`iptables -t nat -I OUTPUT -p tcp -o lo --dport 443 -j REDIRECT --to-port ${C.NGINX_HTTPS_PORT}`, `Adding iptable rule to redirect port 443 on port ${C.NGINX_HTTPS_PORT} (loopback)...`);
     }
 
+    // Generate nginx configuration
+    exec(() => { fs.writeFileSync(C.NGINX_CONFIG_PATH, generateNginxConfig()); fs.chownSync(C.NGINX_CONFIG_PATH, C.UID, C.GID); }, 'Generating Nginx configuration...');
+
     // Generate SSL certificate if it does not exist
     if (!fs.existsSync(C.SSL_CERT_PATH) || !fs.existsSync(C.SSL_KEY_PATH)) {
       console.log('No certificate found, generating one using certbot...');
@@ -89,29 +109,25 @@
 
       var cmd = `certbot certonly -n --agree-tos --email ${C.EMAIL} --webroot -w ${C.SSL_DIR}`;
       C.APP_LIST.forEach(app => cmd += ` -d ${app.fullDomain}`);
-      exec(cmd);
 
-      webroot.stop();
+      execAsync(cmd, (err, stdout, stderr) => {
+        if (err) {
+          console.log(stderr);
+          console.log(`${err}`);
+          process.exit(1);
+        }
 
-      exec(`ln -s /etc/letsencrypt/live/${C.APP_LIST[0].fullDomain}/cert.pem ${C.SSL_CERT_PATH}`);
-      exec(`ln -s /etc/letsencrypt/live/${C.APP_LIST[0].fullDomain}/privkey.pem ${C.SSL_KEY_PATH}`);
+        console.log(stdout);
+
+        webroot.stop();
+        exec(`ln -s /etc/letsencrypt/live/${C.APP_LIST[0].fullDomain}/cert.pem ${C.SSL_CERT_PATH}`);
+        exec(`ln -s /etc/letsencrypt/live/${C.APP_LIST[0].fullDomain}/privkey.pem ${C.SSL_KEY_PATH}`);
+
+        startNginx();
+      });
+
+    } else {
+      startNginx();
     }
-
-    // Generate nginx configuration
-    exec(() => { fs.writeFileSync(C.NGINX_CONFIG_PATH, generateNginxConfig()); fs.chownSync(C.NGINX_CONFIG_PATH, C.UID, C.GID); }, 'Generating Nginx configuration...');
-
-    // Start nginx if it's not already running
-    var nginxRunning = exec('ps waux | grep "nginx: master process"').split('\n').filter(line => line.indexOf('grep') === -1).length;
-
-    if (nginxRunning) {
-      exec(`nginx -s stop`, 'Nginx is already running, stopping it...');
-    }
-
-    exec(`nginx -c ${C.NGINX_CONFIG_PATH}`, 'Starting Nginx...');
-
-    process.on('SIGINT', function () {
-      exec(`nginx -s stop`, '\nStopping Nginx...');
-      process.exit();
-    });
   };
 })();

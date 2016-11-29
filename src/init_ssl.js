@@ -24,8 +24,8 @@
 
       webroot.stop();
 
-      exec(`cp /etc/letsencrypt/live/${C.APP_LIST[0]}/cert.pem ${C.SSL_CERT_PATH}`);
-      exec(`cp /etc/letsencrypt/live/${C.APP_LIST[0]}/privkey.pem ${C.SSL_KEY_PATH}`);
+      exec(`cp /etc/letsencrypt/live/${C.APP_LIST[0].fullDomain}/cert.pem ${C.SSL_CERT_PATH}`);
+      exec(`cp /etc/letsencrypt/live/${C.APP_LIST[0].fullDomain}/privkey.pem ${C.SSL_KEY_PATH}`);
     }
   }
 })();

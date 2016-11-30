@@ -120,7 +120,7 @@
         console.log(stdout);
 
         webroot.close();
-        exec(`ln -s /etc/letsencrypt/live/${C.APP_LIST[0].fullDomain}/cert.pem ${C.SSL_CERT_PATH}`);
+        exec(`ln -s /etc/letsencrypt/live/${C.APP_LIST[0].fullDomain}/fullchain.pem ${C.SSL_CERT_PATH}`);
         exec(`ln -s /etc/letsencrypt/live/${C.APP_LIST[0].fullDomain}/privkey.pem ${C.SSL_KEY_PATH}`);
 
         startNginx();

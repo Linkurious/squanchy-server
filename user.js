@@ -24,6 +24,8 @@
     exit(1, `Usage:\n${VALID_FORMATS.map(f => '* ' + f).join('\n')}`);
   }
 
+  if (command === 'list') subdomain = argv[1];
+
   if (subdomain !== 'all' && C.APPS.indexOf(subdomain) === -1) {
     exit(2, `sub-domain "${subdomain}" does not exist`);
   }
@@ -66,8 +68,6 @@
       console.log(`User "${user}" successfully removed from sub-domain "${subdomain}"!`);
     }
   } else if (command === 'list') {
-    subdomain = argv[1];
-
     console.log(`List of all users for sub-domain ${subdomain}:\n${credentials.list(subdomain).map(u => '- ' + u).join('\n')}`);
   }
 })();

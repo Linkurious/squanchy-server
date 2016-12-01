@@ -12,8 +12,10 @@
       command = argv[0],
       user = argv[1], subdomain = argv[2];
 
+
+
   if (command === 'add') {
-    if (argv.length < 3) exit(1, `Usage: node user.js add <username> <sub-domain>`);
+    if (argv.length != 3) exit(1, `Usage: node user.js add <username> <sub-domain>`);
 
     prompt.start();
     prompt.get({
@@ -32,7 +34,7 @@
 
       var password = result.password;
 
-      if (subdomain === '*') {
+      if (subdomain === 'all') {
         C.APPS.forEach(app => credentials.add(app, user, password));
       } else if (C.APPS.indexOf(subdomain) === -1) {
         exit(2, `sub-domain "${subdomain}" is not registered`);
@@ -43,9 +45,9 @@
     });
 
   } else if (command === 'del') {
-    if (argv.length < 3) exit(1, `Usage: node user.js del <username> <sub-domain>`);
+    if (argv.length != 3) exit(1, `Usage: node user.js del <username> <sub-domain>`);
 
-    if (subdomain === '*') {
+    if (subdomain === 'all') {
       C.APPS.forEach(app => credentials.remove(app, user));
     } else if (C.APPS.indexOf(subdomain) === -1) {
       exit(2, `sub-domain "${subdomain}" is not registered`);

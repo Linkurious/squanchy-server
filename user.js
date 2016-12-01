@@ -22,13 +22,13 @@
     exit(2, `sub-domain "${subdomain}" does not exist`);
   }
 
-  if (command === 'add' || command === 'update') {
-    var userExists = credentials.hasAccess(subdomain, user);
+  var userExists = credentials.hasAccess(subdomain, user);
 
+  if (command === 'add' || command === 'update') {
     if (userExists && command === 'add') {
-      exit(3, `unable to add user ${user} to sub-domain ${subdomain}: this user already exists; use the "update" command if you wish to update this user's password`);
+      exit(3, `unable to add user "${user}" to sub-domain "${subdomain}": this user already exists; use the "update" command if you wish to update this user's password`);
     } else if (!userExists && command === 'update') {
-      exit(3, `unable to update user ${user} in sub-domain ${subdomain}: this user does not exist; use the "add" command if you wish to add this user`);
+      exit(3, `unable to update user "${user}" in sub-domain "${subdomain}": this user does not exist; use the "add" command if you wish to add this user`);
     }
 
     prompt.start();
@@ -49,11 +49,15 @@
       var password = result.password;
 
       credentials.add(subdomain, user, password);
-      console.log(`User ${user} successfully ${userExists ? 'updated in' : 'added to'} sub-domain ${subdomain}!`);
+      console.log(`User "${user}" successfully ${userExists ? 'updated in' : 'added to'} sub-domain "${subdomain}"!`);
     });
 
   } else if (command === 'del') {
-    credentials.remove(subdomain, user);
-    console.log(`User ${user} successfully removed from ${subdomain}!`);
+    if (!userExists) {
+      exit(3, `unable to remove user "${user}" from sub-domain "${subdomain}": this user does not exist`)
+    } else {
+      credentials.remove(subdomain, user);
+      console.log(`User "${user}" successfully removed from sub-domain "${subdomain}"!`);
+    }
   }
 })();

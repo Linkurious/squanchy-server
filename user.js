@@ -14,7 +14,7 @@
       command = argv[0],
       user = argv[1], subdomain = argv[2];
 
-  if (argv.length != 3 || VALID_COMMANDS.indexOf(VALID_COMMANDS) === -1) {
+  if (argv.length != 3 || VALID_COMMANDS.indexOf(command) === -1) {
     exit(1, `Usage: node user.js add|del|update <username> <sub-domain>`);
   }
 

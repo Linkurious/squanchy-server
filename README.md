@@ -30,17 +30,11 @@ The script expects a `config.json` file at the root. This file must contain the 
 * `ssl_dir` (optional): indicates the folder on which to store the ssl certificate and key. Indicates a folder within the root folder. Default: `'.ssl'`.
 * `credential_dir` (optional): indicates the folder on which to store the authorized usernames/passwords for each subdomain. Default: `'.credentials'`.
 
-## Adding a user
+## Adding, removing, updating and listing users:
 
-As the owner specified in the config, run `node user.js add <user> <password> [<sub-domain>]`.
+In all cases, <sub-domain> can be `"all"`. User that have access to this sub-domain have access to all sub-domains.
 
-* `<user>` can be any string.
-* `<password>` is the password for this user. The password will be hashed.
-* `<sub-domain>` must be a string registered in the `apps` field of the configuration. If omitted, the user will be added for all sub-domains.
-
-## Removing a user
-
-As the owner specified in the config, run `node user.js del <user> [<sub-domain>]`.
-
-* `<user>` can be any string.
-* `<sub-domain>` must be a string registered in the `apps` field of the configuration. If omitted, the user will be removed from all sub-domains.
+* `node user.js add <username> <sub-domain>`
+* `node user.js del <username> <sub-domain>`
+* `node user.js update <username> <sub-domain>`
+* `node user.js list <username>`

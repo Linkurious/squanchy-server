@@ -68,6 +68,6 @@
       console.log(`User "${user}" successfully removed from sub-domain "${subdomain}"!`);
     }
   } else if (command === 'list') {
-    console.log(`List of all users for sub-domain ${subdomain}:\n${credentials.list(subdomain).map(u => '- ' + u).join('\n')}`);
+    console.log(`List of all users for sub-domain ${subdomain}:\n${credentials.list(subdomain).map(u => '* ' + u).join('\n')}`);
   }
 })();

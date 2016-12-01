@@ -13,7 +13,7 @@
       user = argv[1], subdomain = argv[2];
 
   if (command === 'add') {
-    if (argv.length < 2) exit(1, `Usage: node user.js add <username> <sub-domain>`);
+    if (argv.length < 3) exit(1, `Usage: node user.js add <username> <sub-domain>`);
 
     prompt.start();
     prompt.get({
@@ -43,7 +43,7 @@
     });
 
   } else if (command === 'del') {
-    if (argv.length < 2) exit(1, `Usage: node user.js del <username> <sub-domain>`);
+    if (argv.length < 3) exit(1, `Usage: node user.js del <username> <sub-domain>`);
 
     if (subdomain === '*') {
       C.APPS.forEach(app => credentials.remove(app, user));

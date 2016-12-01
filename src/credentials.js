@@ -40,6 +40,10 @@
     return !!credentials[username];
   };
 
+  exports.list = function (subdomain) {
+    return Object.keys(tryRequire(getCredentialsFilePath(subdomain)));
+  };
+
   exports.add = function (subdomain, username, password) {
     var filePath = getCredentialsFilePath(subdomain),
         credentials = tryRequire(filePath);

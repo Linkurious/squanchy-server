@@ -8,14 +8,20 @@
     process.exit(code);
   }
 
-  const VALID_COMMANDS = ['add', 'del', 'update'];
+  const VALID_COMMANDS = ['add', 'del', 'update'],
+        VALID_FORMATS = [
+          'add <username> <sub-domain>',
+          'del <username> <sub-domain>',
+          'update <username> <sub-domain>',
+          'list <sub-domain>',
+        ];
 
   var argv = process.argv.slice(2),
       command = argv[0],
       user = argv[1], subdomain = argv[2];
 
-  if (argv.length != 3 || VALID_COMMANDS.indexOf(command) === -1) {
-    exit(1, `Usage: node user.js add|del|update <username> <sub-domain>`);
+  if ((argv.length !== 2 || command !== 'list') && (argv.length != 3 || VALID_COMMANDS.indexOf(command) === -1)) {
+    exit(1, `Usage:\n${VALID_FORMATS.map(f => '* ' + f).join('\n')}`);
   }
 
   if (subdomain !== 'all' && C.APPS.indexOf(subdomain) === -1) {
@@ -59,5 +65,9 @@
       credentials.remove(subdomain, user);
       console.log(`User "${user}" successfully removed from sub-domain "${subdomain}"!`);
     }
+  } else if (command === 'list') {
+    subdomain = argv[1];
+
+    console.log(`List of all users for sub-domain ${subdomain}:\n${credentials.list(subdomain).map(u => '- ' + u).join('\n')}`);
   }
 })();

@@ -11,6 +11,7 @@
   if (typeof config.dns_suffix !== 'string') throw new TypeError('Missing field "dns_suffix" in configuration.');
   if (typeof config.email !== 'string') throw new TypeError('Missing field "email" in configuration.');
   if (!(config.apps instanceof Array) || !config.apps.length) throw new TypeError('Field "apps" in configuration should be a non-empty array of strings.');
+  if (config.apps.indexOf('all') !== -1 ) throw new Error('"add" is a reserved sub-domain name');
 
   var C = {
     ROOT: ROOT,

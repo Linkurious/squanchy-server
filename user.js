@@ -8,14 +8,28 @@
     process.exit(code);
   }
 
+  const VALID_COMMANDS = ['add', 'del', 'update'];
+
   var argv = process.argv.slice(2),
       command = argv[0],
       user = argv[1], subdomain = argv[2];
 
+  if (argv.length != 3 || VALID_COMMANDS.indexOf(VALID_COMMANDS) === -1) {
+    exit(1, `Usage: node user.js add|del|update <username> <sub-domain>`);
+  }
 
+  if (subdomain !== 'all' && C.APPS.indexOf(subdomain) === -1) {
+    exit(2, `sub-domain "${subdomain}" does not exist`);
+  }
 
-  if (command === 'add') {
-    if (argv.length != 3) exit(1, `Usage: node user.js add <username> <sub-domain>`);
+  if (command === 'add' || command === 'update') {
+    var userExists = credentials.hasAccess(subdomain, user);
+
+    if (userExists && command === 'add') {
+      exit(3, `unable to add user ${user} to sub-domain ${subdomain}: this user already exists; use the "update" command if you wish to update this user's password`);
+    } else if (!userExists && command === 'update') {
+      exit(3, `unable to update user ${user} in sub-domain ${subdomain}: this user does not exist; use the "add" command if you wish to add this user`);
+    }
 
     prompt.start();
     prompt.get({
@@ -34,38 +48,12 @@
 
       var password = result.password;
 
-      if (subdomain === 'all') {
-        C.APPS.forEach(app => credentials.add(app, user, password));
-        console.log(`User ${user} successfully added to all sub-domains!`);
-      } else if (C.APPS.indexOf(subdomain) === -1) {
-        exit(2, `sub-domain "${subdomain}" is not registered`);
-      } else {
-        credentials.add(subdomain, user, password);
-        console.log(`User ${user} successfully added to sub-domain ${subdomain}!`);
-      }
+      credentials.add(subdomain, user, password);
+      console.log(`User ${user} successfully ${userExists ? 'updated in' : 'added to'} sub-domain ${subdomain}!`);
     });
 
   } else if (command === 'del') {
-    if (argv.length != 3) exit(1, `Usage: node user.js del <username> <sub-domain>`);
-
-    if (subdomain === 'all') {
-      C.APPS.forEach(app => credentials.remove(app, user));
-      console.log(`User ${user} successfully removed from all sub-domains!`);
-    } else if (C.APPS.indexOf(subdomain) === -1) {
-      exit(2, `sub-domain "${subdomain}" is not registered`);
-    } else {
-      credentials.remove(subdomain, user);
-      console.log(`User ${user} successfully removed from ${subdomain}!`);
-    }
-  } else {
-    exit(1, `Usage: node user.js add|del <username> <sub-domain>`);
-  }
-
-  function getDomainName(name) {
-    if (name === 'all') {
-      return 'all sub-domains';
-    } else {
-      return `sub-domain "${name}"`;
-    }
+    credentials.remove(subdomain, user);
+    console.log(`User ${user} successfully removed from ${subdomain}!`);
   }
 })();

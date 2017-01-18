@@ -32,9 +32,9 @@ The script expects a `config.json` file at the root. This file must contain the 
 
 ## Adding, removing, updating and listing users:
 
-In all cases, <sub-domain> can be `"all"`. User that have access to this sub-domain have access to all sub-domains.
+In all cases, "sub-domain" can be `"all"`. User that have access to this sub-domain have access to all sub-domains.
 
 * `node user.js add <username> <sub-domain>`
 * `node user.js del <username> <sub-domain>`
 * `node user.js update <username> <sub-domain>`
-* `node user.js list <username>`
+* `node user.js list <sub-domain>`

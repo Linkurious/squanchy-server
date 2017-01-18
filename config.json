@@ -20,11 +20,11 @@
       "authUrlPrefix": "/"
     },
     {
-      "subdomain": "doc",
+      "domain": "doc",
       "directoryListing": false
     },
     {
-      "subdomain": "ogma",
+      "domain": "ogma",
       "directoryListing": false
     }
   ]

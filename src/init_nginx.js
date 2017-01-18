@@ -44,7 +44,7 @@
         `    listen ${C.NGINX_HTTPS_PORT};`,
         `    server_name ${app.domain}.${C.ROOT_DOMAIN};`,
         `    port_in_redirect off;`,
-        `    ssl ${sslOn ? 'on' : 'off'};`,
+        `    ssl on;`,
         sslOn ? `    ssl_certificate ${C.SSL_CERT_PATH};` : '',
         sslOn ? `    ssl_certificate_key ${C.SSL_KEY_PATH};`: '',
         `    location / {`,

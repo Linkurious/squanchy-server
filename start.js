@@ -27,7 +27,7 @@
       var rootDir = path.join(C.ROOT, app.domain);
 
       mkdir(rootDir);
-      startApp(app.domain, rootDir, app.port);
+      startApp(app, rootDir, C.GITHUB_OAUTH_2);
     });
   });
 })();

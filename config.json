@@ -2,5 +2,29 @@
   "dns_suffix": "linkurio.us",
   "owner": "linkurious",
   "email": "web@linkurio.us",
-  "apps": ["dev", "ogma"]
+  "githubOAuth2": {
+    "authorizationURL": "https://github.com/login/oauth/authorize",
+    "tokenURL": "https://github.com/login/oauth/access_token",
+    "clientID": "423a927e026d2383ce47",
+    "clientSecret": "2c340b38e8d4d516da80586aed846b269efe432f"
+  },
+  "apps": [
+    {
+      "domain": "dev",
+      "directoryListing": true,
+      "authMembership": {
+        "organizationName": "LinkuriousTest",
+        "teamId": 1
+      },
+      "authUrlPrefix": "/"
+    },
+    {
+      "subdomain": "doc",
+      "directoryListing": false
+    },
+    {
+      "subdomain": "ogma",
+      "directoryListing": false
+    }
+  ]
 }

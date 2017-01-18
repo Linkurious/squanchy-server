@@ -11,7 +11,10 @@ const credentials = require('./credentials');
 const TEMPLATE_PATH = path.join(__dirname, 'template.html'),
       STYLESHEET_PATH = path.join(__dirname, 'style.css');
 
-function app(subdomain, rootDirectory, port, allowExternalPorts) {
+function app(app, rootDirectory, allowExternalPorts) {
+  var subdomain = app.domain;
+  var port = app.port;
+
   var httpApp = express();
 
   function auth(req, res, next) {

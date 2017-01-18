@@ -28,13 +28,21 @@
     GID: userid.gid(OWNER),
     CREDENTIAL_DIR: path.join(ROOT, config.credential_dir || '.credentials'),
     APPS: config.apps,
+    GITHUB_OAUTH_2: config.githubOAuth2,
     APP_LIST: []
   };
 
   var apps = config.apps;
 
   for (var i = 0; i < apps.length; ++i) {
-    C.APP_LIST.push({domain: apps[i], port: PORT + 2 + i, fullDomain: `${apps[i]}.${C.ROOT_DOMAIN}`})
+    C.APP_LIST.push({
+      domain: apps[i].domain,
+      port: PORT + 2 + i,
+      fullDomain: `${apps[i].domain}.${C.ROOT_DOMAIN}`,
+      directoryListing: apps[i].directoryListing,
+      authMembership: apps[i].authMembership,
+      authUrlPrefix: apps[i].authUrlPrefix
+    })
   }
 
   module.exports = C;

@@ -1,13 +1,23 @@
+/**
+ * Create the nginx configuration based on the JSON configuration, create the IPTABLE rules to create the
+ * redirection from ports 80/443 to the internal ports, and start nginx.
+ */
+
 (function () {
   const fs = require('fs');
   const http = require('http');
   const express = require('express');
   const exec = require('./utility').exec;
   const execAsync = require('child_process').exec;
+
+  // Load the formatted configuration
   const C = require('./config');
 
   function generateNginxConfig() {
-    var lines = [];
+    // nginx configuration initialization
+    let lines = [];
+
+    // This will always be the same
     lines.push(
       `user ${C.NGINX_USER} nogroup;`,
       `worker_processes 2;`,
@@ -17,6 +27,7 @@
       `}`,
       ``,
       `http {`,
+      // When connecting on HTTP, redirect to HTTPS
       `  server {`,
       `    listen ${C.NGINX_HTTP_PORT} default_server;`,
       `    server_name _;`,
@@ -24,11 +35,8 @@
       `  }`
     );
 
-    // server {
-    //   listen 80;
-    //   return 301 https://$host$request_uri;
-    //     }
-
+    // For each sub-domain we want, create a nginx rule that will redirect request to this sub-domain to
+    // the appropriate internal port
     C.APP_LIST.forEach(app => {
       lines.push(
         ``,
@@ -56,16 +64,28 @@
     return lines.join('\n');
   }
 
+  /**
+   * Start a web-root server. This is used to generate the SSL certificate with Let's Encrypt.
+   * More information here: https://certbot.eff.org/docs/using.html
+   *
+   * @param dir
+   * @param port
+   * @returns {*}
+   */
   function startWebRootServer(dir, port) {
-    var app = express();
+    let app = express();
 
     app.use(express.static(dir, {dotfiles: 'allow'}));
     return app.listen(port);
   }
 
+  /**
+   * Starts the nginx server.
+   * If one is already running, stops the current one.
+   */
   function startNginx() {
-    // Start nginx if it's not already running
-    var nginxRunning = exec('ps waux | grep "nginx: master process"').split('\n').filter(line => line.indexOf('grep') === -1).length;
+    // Check if nginx is already running
+    let nginxRunning = exec('ps waux | grep "nginx: master process"').split('\n').filter(line => line.indexOf('grep') === -1).length;
 
     if (nginxRunning) {
       exec(`nginx -s stop`, 'Nginx is already running, stopping it...');
@@ -73,6 +93,7 @@
 
     exec(`nginx -c ${C.NGINX_CONFIG_PATH}`, 'Starting Nginx...');
 
+    // When the process is stopped (the user pressed CTRL-C), we want to close nginx before the application exits
     process.on('SIGINT', function () {
       exec(`nginx -s stop`, '\nStopping Nginx...');
       process.exit();
@@ -82,14 +103,14 @@
   module.exports = function (callback) {
 
     // Add the user used by nginx if it doesn't exist
-    var userExists = exec(`cat /etc/passwd | { grep "^${C.NGINX_USER}:" || true; }`);
+    let userExists = exec(`cat /etc/passwd | { grep "^${C.NGINX_USER}:" || true; }`);
 
     if (!userExists) {
       exec(`adduser --system --no-create-home ${C.NGINX_USER}`, `Adding user ${C.NGINX_USER}...`);
     }
 
     // Add the iptable rule to redirect port 80 to nginx port if doesn't exist
-    var ruleExists = exec(`iptables -t nat -L PREROUTING --line-numbers | { grep "tcp dpt:http redir ports ${C.NGINX_HTTP_PORT}" || true; }`);
+    let ruleExists = exec(`iptables -t nat -L PREROUTING --line-numbers | { grep "tcp dpt:http redir ports ${C.NGINX_HTTP_PORT}" || true; }`);
 
     if (!ruleExists) {
       exec(`iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port ${C.NGINX_HTTP_PORT}`, `Adding iptable rule to redirect port 80 on port ${C.NGINX_HTTP_PORT}...`);
@@ -105,9 +126,9 @@
     if (!fs.existsSync(C.SSL_CERT_PATH) || !fs.existsSync(C.SSL_KEY_PATH)) {
       console.log('No certificate found, generating one using certbot...');
 
-      var webroot = startWebRootServer(C.SSL_DIR, C.NGINX_HTTP_PORT);
+      let webroot = startWebRootServer(C.SSL_DIR, C.NGINX_HTTP_PORT);
 
-      var cmd = `certbot certonly -n --agree-tos --email ${C.EMAIL} --webroot -w ${C.SSL_DIR}`;
+      let cmd = `certbot certonly -n --agree-tos --email ${C.EMAIL} --webroot -w ${C.SSL_DIR}`;
       C.APP_LIST.forEach(app => cmd += ` -d ${app.fullDomain}`);
 
       execAsync(cmd, (err, stdout, stderr) => {

@@ -1,3 +1,7 @@
+/**
+ * This module provides functions to check if a given user has the right to access a giben sub-domain.
+ */
+
 (function () {
   const fs = require('fs');
   const path = require('path');
@@ -7,7 +11,7 @@
   const SHA256_SALT = 'sand-castle';
 
   function hash(password) {
-    var sum = crypto.createHash('sha256');
+    let sum = crypto.createHash('sha256');
     sum.update(password + SHA256_SALT);
     return sum.digest('hex');
   }
@@ -25,27 +29,45 @@
   }
 
   function check(subdomain, username, password) {
-    var credentials = tryRequire(getCredentialsFilePath(subdomain));
+    let credentials = tryRequire(getCredentialsFilePath(subdomain));
 
     return credentials[username] === hash(password);
   }
 
+  /**
+   * Checks if a user has the right to access a given sub-domain with the password they provided
+   * @param {string} subdomain
+   * @param {string} username
+   * @param {string} password
+   * @returns {*}
+   */
   exports.check = function (subdomain, username, password) {
     return check(subdomain, username, password) || check('all', username, password);
   };
 
+  /**
+   * Checks if a user has the right to access a given sub-domain
+   * @param {string} subdomain
+   * @param {string} username
+   * @returns {boolean}
+   */
   exports.hasAccess = function (subdomain, username) {
-    var credentials = tryRequire(getCredentialsFilePath(subdomain));
+    let credentials = tryRequire(getCredentialsFilePath(subdomain));
 
     return !!credentials[username];
   };
 
+  /**
+   * List all authorized for a given subdomain
+   * @param {string} subdomain
+   * @returns {Array<string>}
+   */
   exports.list = function (subdomain) {
     return Object.keys(tryRequire(getCredentialsFilePath(subdomain)));
   };
 
   exports.add = function (subdomain, username, password) {
-    var filePath = getCredentialsFilePath(subdomain),
+    let filePath = getCredentialsFilePath(subdomain),
         credentials = tryRequire(filePath);
 
     credentials[username] = hash(password);
@@ -53,7 +75,7 @@
   };
 
   exports.remove = function (subdomain, username) {
-    var filePath = getCredentialsFilePath(subdomain),
+    let filePath = getCredentialsFilePath(subdomain),
         credentials = tryRequire(filePath);
 
     credentials[username] = undefined;

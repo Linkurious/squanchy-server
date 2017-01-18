@@ -1,37 +1,50 @@
-var path = require('path');
-var https = require('https');
-var fs = require('fs');
+/**
+ * This module exports a function that creates a HTTP server that serves files
+ */
 
-var express = require('express');
-var serveIndex = require('serve-index');
-var basicAuth = require('basic-auth');
+(function () {
+  let path = require('path');
+  let https = require('https');
+  let fs = require('fs');
 
-const credentials = require('./credentials');
+  let express = require('express');
+  let serveIndex = require('serve-index');
+  let basicAuth = require('basic-auth');
 
-const TEMPLATE_PATH = path.join(__dirname, 'template.html'),
-      STYLESHEET_PATH = path.join(__dirname, 'style.css');
+  const credentials = require('./credentials');
 
-function app(subdomain, rootDirectory, port, allowExternalPorts) {
-  var httpApp = express();
+  const TEMPLATE_PATH = path.join(__dirname, 'template.html'),
+        STYLESHEET_PATH = path.join(__dirname, 'style.css');
 
-  function auth(req, res, next) {
-    var user = basicAuth(req);
+  /**
+   * Create a HTTP server
+   * @param {string} subdomain Subdomain which must be used for authentication
+   * @param {string} rootDirectory Directory from which to serve the files
+   * @param {number} port Port on which the server must be started
+   * @param {boolean} allowExternalPorts If true, the server will only serve files on localhost. Else the files can be accessed from all computers on the network.
+   */
+  function app(subdomain, rootDirectory, port, allowExternalPorts) {
+    let httpApp = express();
 
-    if (!user || !credentials.check(subdomain, user.name, user.pass)) {
-      res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-      return res.sendStatus(401);
-    } else {
-      return next();
+    function auth(req, res, next) {
+      let user = basicAuth(req);
+
+      if (!user || !credentials.check(subdomain, user.name, user.pass)) {
+        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+        return res.sendStatus(401);
+      } else {
+        return next();
+      }
     }
+
+    httpApp.use('*', auth);
+    httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));
+    httpApp.use('/', serveIndex(rootDirectory, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
+
+    httpApp.listen(port, allowExternalPorts ? undefined : 'localhost');
+
+    console.log(`Serving files from ${rootDirectory} on port ${port}...`);
   }
 
-  httpApp.use('*', auth);
-  httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));
-  httpApp.use('/', serveIndex(rootDirectory, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
-
-  httpApp.listen(port, allowExternalPorts ? undefined : 'localhost');
-
-  console.log(`Serving files from ${rootDirectory} on port ${port}...`);
-}
-
-module.exports = app;
+  module.exports = app;
+})();

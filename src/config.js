@@ -1,3 +1,7 @@
+/**
+ * This file parse the configuration file and exports a formatted object that contain all the data required by other files
+ */
+
 (function () {
   const path = require('path');
   const config = require('../config.json');
@@ -13,7 +17,7 @@
   if (!(config.apps instanceof Array) || !config.apps.length) throw new TypeError('Field "apps" in configuration should be a non-empty array of strings.');
   if (config.apps.indexOf('all') !== -1 ) throw new Error('"add" is a reserved sub-domain name');
 
-  var C = {
+  let C = {
     ROOT: ROOT,
     NGINX_CONFIG_PATH: path.join(ROOT, '.nginx.conf'),
     NGINX_HTTP_PORT: PORT,
@@ -31,9 +35,9 @@
     APP_LIST: []
   };
 
-  var apps = config.apps;
+  let apps = config.apps;
 
-  for (var i = 0; i < apps.length; ++i) {
+  for (let i = 0; i < apps.length; ++i) {
     C.APP_LIST.push({domain: apps[i], port: PORT + 2 + i, fullDomain: `${apps[i]}.${C.ROOT_DOMAIN}`})
   }
 

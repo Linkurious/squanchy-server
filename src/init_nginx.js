@@ -45,8 +45,8 @@
         `    server_name ${app.domain}.${C.ROOT_DOMAIN};`,
         `    port_in_redirect off;`,
         `    ssl ${sslOn ? 'on' : 'off'};`,
-        `    ssl_certificate ${C.SSL_CERT_PATH};`,
-        `    ssl_certificate_key ${C.SSL_KEY_PATH};`,
+        sslOn ? `    ssl_certificate ${C.SSL_CERT_PATH};` : '',
+        sslOn ? `    ssl_certificate_key ${C.SSL_KEY_PATH};`: '',
         `    location / {`,
         `      proxy_pass http://localhost:${app.port};`,
         `      proxy_ssl_session_reuse on;`,
@@ -123,7 +123,7 @@
     exec(() => { fs.writeFileSync(C.NGINX_CONFIG_PATH, generateNginxConfig(sslOn)); fs.chownSync(C.NGINX_CONFIG_PATH, C.UID, C.GID); }, 'Generating Nginx configuration...');
 
     // Generate SSL certificate if it does not exist
-    if (sslOn && !fs.existsSync(C.SSL_CERT_PATH) || !fs.existsSync(C.SSL_KEY_PATH)) {
+    if (sslOn && (!fs.existsSync(C.SSL_CERT_PATH) || !fs.existsSync(C.SSL_KEY_PATH))) {
       console.log('No certificate found, generating one using certbot...');
 
       let webroot = startWebRootServer(C.SSL_DIR, C.NGINX_HTTP_PORT);

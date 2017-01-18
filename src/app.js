@@ -18,8 +18,10 @@
 
   /**
    * Create a HTTP server
+   * @param {object} app
    * @param {string} app.subdomain Subdomain which must be used for authentication
    * @param {number} app.port Port on which the server must be started
+   * @param {boolean} app.directoryListing Whether to have directory listings
    * @param {string} rootDirectory Directory from which to serve the files
    * @param {boolean} allowExternalPorts If true, the server will only serve files on localhost. Else the files can be accessed from all computers on the network.
    */
@@ -42,7 +44,9 @@
 
     httpApp.use('*', auth);
     httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));
-    httpApp.use('/', serveIndex(rootDirectory, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
+    if (app.directoryListing) {
+      httpApp.use('/', serveIndex(rootDirectory, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
+    }
 
     httpApp.listen(port, allowExternalPorts ? undefined : 'localhost');
 

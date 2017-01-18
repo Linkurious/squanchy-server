@@ -26,14 +26,19 @@
       `  worker_connections 1024;`,
       `}`,
       ``,
-      `http {`,
-      // When connecting on HTTP, redirect to HTTPS
-      `  server {`,
-      `    listen ${C.NGINX_HTTP_PORT} default_server;`,
-      `    server_name _;`,
-      `    return 301 https://$host$request_uri;`,
-      `  }`
+      `http {`
     );
+
+    if (sslOn) {
+      // When connecting on HTTP, redirect to HTTPS
+      lines.push(
+          `  server {`,
+          `    listen ${C.NGINX_HTTP_PORT} default_server;`,
+          `    server_name _;`,
+          `    return 301 https://$host$request_uri;`,
+          `  }`
+      );
+    }
 
     // For each sub-domain we want, create a nginx rule that will redirect request to this sub-domain to
     // the appropriate internal port
@@ -41,15 +46,15 @@
       lines.push(
         ``,
         `  server {`,
-        `    listen ${C.NGINX_HTTPS_PORT};`,
+        `    listen ${sslOn ? C.NGINX_HTTPS_PORT : C.NGINX_HTTP_PORT};`,
         `    server_name ${app.domain}.${C.ROOT_DOMAIN};`,
         `    port_in_redirect off;`,
-        `    ssl on;`,
+        `    ssl ${sslOn ? 'on' : 'off'};`,
         sslOn ? `    ssl_certificate ${C.SSL_CERT_PATH};` : '',
         sslOn ? `    ssl_certificate_key ${C.SSL_KEY_PATH};`: '',
         `    location / {`,
         `      proxy_pass http://localhost:${app.port};`,
-        `      proxy_ssl_session_reuse on;`,
+        sslOn ? `      proxy_ssl_session_reuse on;` : '',
         `      proxy_redirect off;`,
         `      proxy_set_header   Host             $host;`,
         `      proxy_set_header   X-Real-IP        $remote_addr;`,

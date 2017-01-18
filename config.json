@@ -8,6 +8,7 @@
     "clientID": "423a927e026d2383ce47",
     "clientSecret": "2c340b38e8d4d516da80586aed846b269efe432f"
   },
+  "ssl": false,
   "apps": [
     {
       "domain": "dev",

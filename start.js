@@ -25,7 +25,7 @@
   mkdir(C.CREDENTIAL_DIR);
 
   // After starting nginx, start an HTTP server for each sub-domain
-  initNginx(() => {
+  initNginx(C.SSL_ON, () => {
     C.APP_LIST.forEach(app => {
       let rootDir = path.join(C.ROOT, app.domain);
 

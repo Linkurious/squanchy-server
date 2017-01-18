@@ -24,6 +24,7 @@
     NGINX_HTTPS_PORT: PORT + 1,
     NGINX_USER: config.nginx_user || 'nginx',
     ROOT_DOMAIN: config.dns_suffix,
+    SSL_ON: config.ssl,
     SSL_DIR: SSL_DIR,
     SSL_CERT_PATH: path.join(SSL_DIR, 'fullchain.pem'),
     SSL_KEY_PATH: path.join(SSL_DIR, 'privkey.pem'),

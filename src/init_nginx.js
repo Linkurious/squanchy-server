@@ -35,7 +35,7 @@
           `  server {`,
           `    listen ${C.NGINX_HTTP_PORT} default_server;`,
           `    server_name _;`,
-          `    return 301 https://$host$request_uri;`,
+          `    return 302 https://$host$request_uri;`,
           `  }`
       );
     }

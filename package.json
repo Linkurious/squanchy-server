@@ -21,6 +21,7 @@
     "express": "^4.14.0",
     "prompt": "^1.0.0",
     "serve-index": "^1.8.0",
-    "userid": "^0.2.0"
+    "userid": "^0.2.0",
+    "lodash": "4.17.4"
   }
 }

@@ -6,6 +6,7 @@
   const path = require('path');
   const config = require('../config.json');
   const userid = require('userid');
+  const _ = require('lodash');
 
   const OWNER = config.owner || 'root',
         ROOT = path.join(OWNER === 'root' ? '/root' : `/home/${OWNER}`, config.nginx_root || 'www'),
@@ -32,7 +33,7 @@
     UID: userid.uid(OWNER),
     GID: userid.gid(OWNER),
     CREDENTIAL_DIR: path.join(ROOT, config.credential_dir || '.credentials'),
-    APPS: config.apps,
+    APPS: _.map(config.apps, app => app.domain),
     GITHUB_OAUTH_2: config.githubOAuth2,
     APP_LIST: []
   };

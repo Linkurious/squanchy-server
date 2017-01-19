@@ -50,6 +50,7 @@
       let githubAuthService = new githubAuth(app.auth, app.domain);
 
       httpApp.use(expressSession(sessionOptions));
+      httpApp.use('/callback', githubAuthService.authMiddleware.bind(githubAuthService));
       httpApp.use(app.auth.urlPrefix, githubAuthService.authMiddleware.bind(githubAuthService));
     }
 

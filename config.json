@@ -11,8 +11,7 @@
         "clientID": "423a927e026d2383ce47",
         "clientSecret": "2c340b38e8d4d516da80586aed846b269efe432f",
         "redirectUrl": "http://localhost:8002/callback",
-        "organizationName": "LinkuriousTest",
-        "teamName": "Team1",
+        "teamId": 2240894,
         "urlPrefix": "/"
       }
     },

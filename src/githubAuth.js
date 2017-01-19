@@ -35,10 +35,7 @@ class GithubAuth {
           json: true,
           uri: 'https://github.com/login/oauth/access_token'
         }, (err, res) => {
-          var a;
-          if (true) {
-            console.log('yes');
-          }
+          console.log(res.body);
         });
       }
     } else {
@@ -50,7 +47,7 @@ class GithubAuth {
         parsedAuthUrl.query = _.assign(parsedAuthUrl.query, {
           'client_id': this.clientID,
           'response_type': 'code',
-          scope: 'user:email',
+          scope: 'user:email read:org',
           'redirect_uri': this.redirectUrl,
           state: state
         });

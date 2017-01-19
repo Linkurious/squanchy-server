@@ -47,8 +47,10 @@
     let httpApp = express();
 
     if (app.auth) {
+      let githubAuthService = new githubAuth(app.auth);
+
       httpApp.use(expressSession(sessionOptions));
-      httpApp.use(app.auth.urlPrefix, (new githubAuth(app.auth)).authMiddleware);
+      httpApp.use(app.auth.urlPrefix, githubAuthService.authMiddleware.bind(githubAuthService));
     }
 
     httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));

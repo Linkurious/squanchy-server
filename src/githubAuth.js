@@ -39,7 +39,7 @@ class GithubAuth {
             return res.status(400).send(err.message);
           }
 
-          let accessToken = res.body.access_token;
+          let accessToken = accessTokenRes.body && accessTokenRes.body.access_token;
 
           request.get({
             headers: {'Authorization': 'token ' + accessToken},
@@ -66,7 +66,7 @@ class GithubAuth {
                 return res.status(500).send(`Critical error: team ${this.teamName} doesn't belong to ${this.organizationName}`);
               }
 
-              
+
             } else {
               // if a user can't see the team, it doesn't belongs to the organization
               return res.status(403).send('You don\'t have access right to this resource.');

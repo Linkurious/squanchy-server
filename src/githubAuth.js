@@ -33,7 +33,7 @@ class GithubAuth {
             grant_type: 'authorization_code'
           },
           json: true,
-          uri: 'https://www.googleapis.com/oauth2/v4/token'
+          uri: 'https://github.com/login/oauth/access_token'
         }, (err, res) => {
           var a;
           if (true) {

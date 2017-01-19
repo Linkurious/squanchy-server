@@ -8,8 +8,25 @@
   let fs = require('fs');
 
   let express = require('express');
+  let expressSession = require('express-session');
+
+  let Auth = require('./auth');
+  let GitHubStrategy = require('passport-github').Strategy;
+  let passport = require('passport');
+
+  // sessions : use memory store
+  const sessionOptions = {
+    secret: Math.random().toString(36),
+    resave: false,
+    saveUninitialized: true,
+    name: 'dev-center.session',
+    rolling: true,
+    store: require('./sessionStore'),
+    cookie: { secure: false, httpOnly: false, path: '/', maxAge: null}
+  };
+
   let serveIndex = require('serve-index');
-  let basicAuth = require('basic-auth');
+  // let basicAuth = require('basic-auth');
 
   const credentials = require('./credentials');
 
@@ -23,26 +40,39 @@
    * @param {number} app.port Port on which the server must be started
    * @param {boolean} app.directoryListing Whether to have directory listings
    * @param {string} rootDirectory Directory from which to serve the files
+   * @param {object} githubConfig
+   * @param {string} githubConfig.clientID
+   * @param {string} githubConfig.clientSecret
    * @param {boolean} allowExternalPorts If true, the server will only serve files on localhost. Else the files can be accessed from all computers on the network.
    */
-  function app(app, rootDirectory, allowExternalPorts) {
+  function app(app, rootDirectory, githubConfig, allowExternalPorts) {
+    passport.use(new GitHubStrategy({
+          clientID: githubConfig.clientID,
+          clientSecret: githubConfig.clientSecret,
+          callbackURL: "http://doc.linkurio.us/callback" // TODO make it generic
+        },
+        function(accessToken, refreshToken, profile, cb) {
+          return cb(null, profile);
+        }
+    ));
+
     var subdomain = app.domain;
     var port = app.port;
 
     let httpApp = express();
 
     function auth(req, res, next) {
-      let user = basicAuth(req);
+      if (req.session.user || false) { // TODO if this path is not protected, next
 
-      if (!user || !credentials.check(subdomain, user.name, user.pass)) {
-        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-        return res.sendStatus(401);
       } else {
-        return next();
+        return passport.authenticate('github')(req, res, (req, res, next) => {
+
+        });
       }
     }
 
-    httpApp.use('*', auth);
+    httpApp.use(expressSession(sessionOptions));
+    httpApp.use(auth);
     httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));
     if (app.directoryListing) {
       httpApp.use('/', serveIndex(rootDirectory, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));

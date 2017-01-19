@@ -4,7 +4,14 @@
 
 const url = require('url');
 const _ = require('lodash');
-const request = require('request');
+let request = require('request');
+
+request = request.defaults({
+  json: true,
+  headers: {
+    'User-Agent': 'LK Documentation'
+  }
+});
 
 class GithubAuth {
   constructor(auth) {
@@ -31,7 +38,6 @@ class GithubAuth {
             redirect_uri: this.redirectUrl,
             grant_type: 'authorization_code'
           },
-          json: true,
           uri: 'https://github.com/login/oauth/access_token'
         }, (err, accessTokenRes) => {
           if (err) {
@@ -41,11 +47,11 @@ class GithubAuth {
           let accessToken = accessTokenRes.body && accessTokenRes.body.access_token;
 
           request.get('https://api.github.com/user',
-              {qs: {'access_token': accessToken}, json: true}, (err, userR) => {
+              {qs: {'access_token': accessToken}}, (err, userR) => {
             let username = userR.body || userR.body.login;
 
             request.get(`https://api.github.com/teams/${this.teamId}/memberships/${username}`,
-                {qs: {'access_token': accessToken}, json: true}, (err, membershipR) => {
+                {qs: {'access_token': accessToken}}, (err, membershipR) => {
 
               var a;
 

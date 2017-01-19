@@ -56,7 +56,7 @@ class GithubAuth {
             request.get(`https://api.github.com/teams/${this.teamId}/memberships/${username}`,
                 {qs: {'access_token': accessToken}}, (err, membershipR) => {
               let statusMembership = membershipR.body && membershipR.body.state;
-              if (state === 'active') {
+              if (statusMembership === 'active') {
                 if (req.session.user === undefined || req.session.user === null) {
                   req.session.user = {
                     domains: []

@@ -13,6 +13,8 @@
   let sessionStore = require('./sessionStore');
   let githubAuth = require('./githubAuth');
 
+  let getLatest = require('./getLatest');
+
   // sessions : use memory store
   const sessionOptions = {
     secret: Math.random().toString(36),
@@ -54,10 +56,13 @@
       httpApp.use(app.auth.urlPrefix, githubAuthService.authMiddleware.bind(githubAuthService));
     }
 
+    httpApp.use();
     httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));
     if (app.directoryListing) {
       httpApp.use('/', serveIndex(rootDirectory, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
     }
+
+    httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));
 
     httpApp.listen(port, allowExternalPorts ? undefined : 'localhost');
 

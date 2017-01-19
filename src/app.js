@@ -50,7 +50,7 @@
     passport.use(new GitHubStrategy({
           clientID: githubConfig.clientID,
           clientSecret: githubConfig.clientSecret,
-          callbackURL: "http://doc.linkurio.us/callback" // TODO make it generic
+          callbackURL: "http://localhost:8001/callback" // TODO make it generic
         },
         function(accessToken, refreshToken, profile, cb) {
           return cb(null, profile);

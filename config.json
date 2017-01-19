@@ -6,7 +6,14 @@
   "apps": [
     {
       "domain": "dev",
-      "directoryListing": true
+      "directoryListing": true,
+      "auth": {
+        "clientID": "<clientID>",
+        "clientSecret": "<clientSecret>",
+        "redirectUrl": "<redirectUrl>",
+        "teamId": 1,
+        "urlPrefix": "/"
+      }
     },
     {
       "domain": "doc",

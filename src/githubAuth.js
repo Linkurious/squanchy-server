@@ -29,7 +29,7 @@ class GithubAuth {
             code: req.query.code,
             client_id: this.clientID,
             client_secret: this.clientSecret,
-            redirect_uri: this.urlPrefix,
+            redirect_uri: this.redirectUrl,
             grant_type: 'authorization_code'
           },
           json: true,

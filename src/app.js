@@ -10,10 +10,8 @@
   let express = require('express');
   let expressSession = require('express-session');
 
-  let GitHubStrategy = require('passport-github').Strategy;
-  let passport = require('passport');
-
-  let SessionStore = require('./sessionStore');
+  let sessionStore = require('./sessionStore');
+  let githubAuth = require('./githubAuth');
 
   // sessions : use memory store
   const sessionOptions = {
@@ -22,7 +20,7 @@
     saveUninitialized: true,
     name: 'dev-center.session',
     rolling: true,
-    store: new SessionStore(),
+    store: new sessionStore(),
     cookie: { secure: false, httpOnly: false, path: '/', maxAge: null}
   };
 
@@ -44,35 +42,15 @@
    * @param {boolean} allowExternalPorts If true, the server will only serve files on localhost. Else the files can be accessed from all computers on the network.
    */
   function app(app, rootDirectory, allowExternalPorts) {
-    if (app.auth) {
-      passport.use(new GitHubStrategy({
-            clientID: app.auth.clientID,
-            clientSecret: app.auth.clientSecret,
-            callbackURL: "http://localhost:8002/callback" // TODO make it generic
-          },
-          function (accessToken, refreshToken, profile, cb) {
-            return cb(null, profile);
-          }
-      ));
-    }
-
-    var subdomain = app.domain;
     var port = app.port;
 
     let httpApp = express();
 
-    function auth(req, res, next) {
-      if (app.auth === undefined || app.auth === null || req.session.user || false) { // TODO if this path is not protected, next
-        var a;
-      } else {
-        return passport.authenticate('github')(req, res, (req, res, next) => {
-          var a;
-        });
-      }
+    if (app.auth) {
+      httpApp.use(expressSession(sessionOptions));
+      httpApp.use(app.auth.urlPrefix, (new githubAuth(app.auth)).authMiddleware);
     }
 
-    httpApp.use(expressSession(sessionOptions));
-    httpApp.use(auth);
     httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));
     if (app.directoryListing) {
       httpApp.use('/', serveIndex(rootDirectory, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));

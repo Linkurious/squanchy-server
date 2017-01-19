@@ -151,6 +151,6 @@ class SessionStore extends Store {
   }
 }
 
-SessionStore.TWO_STAGE_AUTH_FLAG = 'id';
+SessionStore.TWO_STAGE_AUTH_FLAG = 'TwoStageAuth';
 
 module.exports = SessionStore;

@@ -45,8 +45,7 @@
       port: PORT + 2 + i,
       fullDomain: `${apps[i].domain}.${C.ROOT_DOMAIN}`,
       directoryListing: apps[i].directoryListing,
-      auth: apps[i].auth,
-      authUrlPrefix: apps[i].authUrlPrefix
+      auth: apps[i].auth
     })
   }
 

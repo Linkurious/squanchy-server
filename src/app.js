@@ -13,6 +13,8 @@
   let GitHubStrategy = require('passport-github').Strategy;
   let passport = require('passport');
 
+  let SessionStore = require('./sessionStore');
+
   // sessions : use memory store
   const sessionOptions = {
     secret: Math.random().toString(36),
@@ -20,7 +22,7 @@
     saveUninitialized: true,
     name: 'dev-center.session',
     rolling: true,
-    store: require('./sessionStore'),
+    store: new SessionStore(),
     cookie: { secure: false, httpOnly: false, path: '/', maxAge: null}
   };
 

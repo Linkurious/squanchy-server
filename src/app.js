@@ -47,7 +47,7 @@
     let httpApp = express();
 
     if (app.auth) {
-      let githubAuthService = new githubAuth(app.auth);
+      let githubAuthService = new githubAuth(app.auth, app.domain);
 
       httpApp.use(expressSession(sessionOptions));
       httpApp.use(app.auth.urlPrefix, githubAuthService.authMiddleware.bind(githubAuthService));

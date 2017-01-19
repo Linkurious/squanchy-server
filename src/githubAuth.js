@@ -14,16 +14,19 @@ request = request.defaults({
 });
 
 class GithubAuth {
-  constructor(auth) {
+  constructor(auth, domain) {
     this.clientID = auth.clientID;
     this.clientSecret = auth.clientSecret;
     this.redirectUrl = auth.redirectUrl;
     this.teamId = auth.teamId;
     this.urlPrefix = auth.urlPrefix;
+    this.domain = domain;
   }
 
   authMiddleware(req, res, next) {
-    if (req.session.user) {
+    if (req.session.user &&
+        req.session.user.domains &&
+        req.session.user.domains.indexOf(this.domain) !== -1) {
       next();
     } else if (req.query.code) {
       if (req.session.state !== req.query.state) {
@@ -48,14 +51,25 @@ class GithubAuth {
 
           request.get('https://api.github.com/user',
               {qs: {'access_token': accessToken}}, (err, userR) => {
-            let username = userR.body || userR.body.login;
+            let username = userR.body && userR.body.login;
 
             request.get(`https://api.github.com/teams/${this.teamId}/memberships/${username}`,
                 {qs: {'access_token': accessToken}}, (err, membershipR) => {
+              let statusMembership = membershipR.body && membershipR.body.state;
+              if (state === 'active') {
+                if (req.session.user === undefined || req.session.user === null) {
+                  req.session.user = {
+                    domains: []
+                  }
+                }
+                req.session.user.domains.push(this.domain);
 
-              var a;
-
-              var m = membershipR;
+                req.session.save(() => {
+                  res.redirect(this.urlPrefix);
+                });
+              } else {
+                res.status(403).send("You are not authorized to see this resource");
+              }
             });
           });
         });

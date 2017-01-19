@@ -56,7 +56,7 @@
       httpApp.use(app.auth.urlPrefix, githubAuthService.authMiddleware.bind(githubAuthService));
     }
 
-    httpApp.use(getLatest);
+    httpApp.use(getLatest(rootDirectory));
     httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));
     if (app.directoryListing) {
       httpApp.use('/', serveIndex(rootDirectory, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));

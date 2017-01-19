@@ -12,7 +12,7 @@ class GithubAuth {
     this.clientSecret = auth.clientSecret;
     this.redirectUrl = auth.redirectUrl;
     this.organizationName = auth.organizationName;
-    this.teamId = auth.teamId;
+    this.teamName = auth.teamName;
     this.urlPrefix = auth.urlPrefix;
   }
 
@@ -21,7 +21,7 @@ class GithubAuth {
       next();
     } else if (req.query.code) {
       if (req.session.state !== req.query.state) {
-        // something fishy
+        // something fishy, or more simply someone is not using the right URL
         res.status(400).send("req.session.state !== req.query.state");
       } else {
         request.post({
@@ -34,8 +34,44 @@ class GithubAuth {
           },
           json: true,
           uri: 'https://github.com/login/oauth/access_token'
-        }, (err, res) => {
-          console.log(res.body);
+        }, (err, accessTokenRes) => {
+          if (err) {
+            return res.status(400).send(err.message);
+          }
+
+          let accessToken = res.body.access_token;
+
+          request.get({
+            headers: {'Authorization': 'token ' + accessToken},
+            json: true,
+            uri: `https://api.github.com/orgs/${this.organizationName}/teams`
+          }, (err, organizationRes) => {
+            if (err) {
+              return res.status(400).send(err.message);
+            }
+
+            if (organizationRes.statusCode === 200) {
+              // we get the team id from the team name
+              let teamId = null;
+              let teams = organizationRes.body;
+              for (var i = 0; i < teams.length; i++) {
+                if (teams[i].name === this.teamName) {
+                  teamId = teams[i].id;
+                  break;
+                }
+              }
+
+              if (teamId === null) {
+                // the team doesn't belong to the organization
+                return res.status(500).send(`Critical error: team ${this.teamName} doesn't belong to ${this.organizationName}`);
+              }
+
+              
+            } else {
+              // if a user can't see the team, it doesn't belongs to the organization
+              return res.status(403).send('You don\'t have access right to this resource.');
+            }
+          });
         });
       }
     } else {

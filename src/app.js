@@ -10,7 +10,6 @@
   let express = require('express');
   let expressSession = require('express-session');
 
-  let Auth = require('./auth');
   let GitHubStrategy = require('passport-github').Strategy;
   let passport = require('passport');
 

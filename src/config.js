@@ -34,7 +34,6 @@
     GID: userid.gid(OWNER),
     CREDENTIAL_DIR: path.join(ROOT, config.credential_dir || '.credentials'),
     APPS: _.map(config.apps, app => app.domain),
-    GITHUB_OAUTH_2: config.githubOAuth2,
     APP_LIST: []
   };
 
@@ -46,7 +45,7 @@
       port: PORT + 2 + i,
       fullDomain: `${apps[i].domain}.${C.ROOT_DOMAIN}`,
       directoryListing: apps[i].directoryListing,
-      authMembership: apps[i].authMembership,
+      auth: apps[i].auth,
       authUrlPrefix: apps[i].authUrlPrefix
     })
   }

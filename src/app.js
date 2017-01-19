@@ -41,21 +41,20 @@
    * @param {number} app.port Port on which the server must be started
    * @param {boolean} app.directoryListing Whether to have directory listings
    * @param {string} rootDirectory Directory from which to serve the files
-   * @param {object} githubConfig
-   * @param {string} githubConfig.clientID
-   * @param {string} githubConfig.clientSecret
    * @param {boolean} allowExternalPorts If true, the server will only serve files on localhost. Else the files can be accessed from all computers on the network.
    */
-  function app(app, rootDirectory, githubConfig, allowExternalPorts) {
-    passport.use(new GitHubStrategy({
-          clientID: githubConfig.clientID,
-          clientSecret: githubConfig.clientSecret,
-          callbackURL: "http://localhost:8001/callback" // TODO make it generic
-        },
-        function(accessToken, refreshToken, profile, cb) {
-          return cb(null, profile);
-        }
-    ));
+  function app(app, rootDirectory, allowExternalPorts) {
+    if (app.auth) {
+      passport.use(new GitHubStrategy({
+            clientID: app.auth.clientID,
+            clientSecret: app.auth.clientSecret,
+            callbackURL: "http://localhost:8002/callback" // TODO make it generic
+          },
+          function (accessToken, refreshToken, profile, cb) {
+            return cb(null, profile);
+          }
+      ));
+    }
 
     var subdomain = app.domain;
     var port = app.port;
@@ -63,11 +62,11 @@
     let httpApp = express();
 
     function auth(req, res, next) {
-      if (req.session.user || false) { // TODO if this path is not protected, next
-
+      if (app.auth === undefined || app.auth === null || req.session.user || false) { // TODO if this path is not protected, next
+        var a;
       } else {
         return passport.authenticate('github')(req, res, (req, res, next) => {
-
+          var a;
         });
       }
     }

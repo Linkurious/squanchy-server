@@ -30,7 +30,7 @@
       let rootDir = path.join(C.ROOT, app.domain);
 
       mkdir(rootDir);
-      startApp(app, rootDir, C.GITHUB_OAUTH_2);
+      startApp(app, rootDir);
     });
   });
 })();

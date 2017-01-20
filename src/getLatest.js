@@ -20,6 +20,10 @@ function semVerComparator(x, y) {
   return 0;
 }
 
+function isSemVer(x) {
+  return semVerComparator(x, 'v0.0.0.0') >= 0;
+}
+
 class GetLatest {
   constructor(rootDir) {
     this.rootDir = rootDir;
@@ -41,7 +45,13 @@ class GetLatest {
       fs.readdir(directoryToCheck, (err, files) => {
         if (files) {
           files.forEach(file => {
-            console.log(file);
+            if (isSemVer(file)) {
+              if (versionFound === null) {
+                versionFound === file;
+              } else {
+                versionFound = semVerComparator(versionFound, file) > 0 ? versionFound : file;
+              }
+            }
           });
 
           if (versionFound === null) {

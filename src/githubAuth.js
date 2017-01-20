@@ -65,7 +65,7 @@ class GithubAuth {
                 req.session.user.domains.push(this.domain);
 
                 req.session.save(() => {
-                  res.redirect(this.urlPrefix);
+                  res.redirect(req.session.desiredResource);
                 });
               } else {
                 res.status(403).send("You are not authorized to see this resource");
@@ -78,6 +78,7 @@ class GithubAuth {
       let state = Math.random().toString(36);
       req.session['TwoStageAuth'] = true;
       req.session.state = state;
+      req.session.desiredResource = req.originalUrl;
       req.session.save(() => {
         let parsedAuthUrl = url.parse('https://github.com/login/oauth/authorize', true);
         parsedAuthUrl.query = _.assign(parsedAuthUrl.query, {
@@ -88,7 +89,8 @@ class GithubAuth {
           state: state
         });
 
-        res.redirect(url.format(parsedAuthUrl));
+        res.redirect('/resources/auth.html?redirect_uri=' +
+            encodeURIComponent(url.format(parsedAuthUrl)));
       });
     }
   }

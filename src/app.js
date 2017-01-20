@@ -61,7 +61,7 @@
         if (resolvedPath === rootDirectory + req.originalUrl) {
           next();
         } else {
-          res.status('400', 'Symlinks are disabled');
+          res.status('400').send('Symlinks are disabled');
         }
       });
       httpApp.use('/callback', githubAuthService.authMiddleware.bind(githubAuthService));

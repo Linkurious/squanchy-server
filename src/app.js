@@ -6,7 +6,6 @@
   let path = require('path');
   let https = require('https');
   let fs = require('fs');
-  let path = require('path');
 
   let express = require('express');
   let expressSession = require('express-session');

@@ -52,6 +52,8 @@
     let getLatestService = new getLatest(rootDirectory);
     httpApp.use(getLatestService.getLatestMiddleware.bind(getLatestService));
 
+    httpApp.use('/resources', express.static(path.join(__dirname + '/resources'), {dotfiles: 'allow'}));
+
     if (app.auth) {
       let githubAuthService = new githubAuth(app.auth, app.domain);
 
@@ -60,6 +62,7 @@
       httpApp.use('/callback', githubAuthService.authMiddleware.bind(githubAuthService));
       httpApp.use(function checkPathSafety(req, res, next) {
         // if realPath is different from rootDirectory + originalUrl we don't continue
+
         rp.realpath(rootDirectory + req.originalUrl, function (err, realPath) {
           realPath = realPath && realPath.replace(/\/$/, '');
           let originalPath = (rootDirectory + req.originalUrl);
@@ -73,8 +76,6 @@
       });
       httpApp.use(app.auth.urlPrefix, githubAuthService.authMiddleware.bind(githubAuthService));
     }
-
-    httpApp.use('/resources', express.static(path.join(__dirname + '/resources'), {dotfiles: 'allow'}));
 
     httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));
     if (app.directoryListing) {

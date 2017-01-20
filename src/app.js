@@ -57,7 +57,7 @@
       httpApp.use(expressSession(sessionOptions));
       httpApp.use(function checkPathSafety(req, res, next) {
         // if path.resolve is different from rootDirectory + originalUrl we don't continue
-        let resolvedPath = path.resolve(rootDirectory + req.originalUrl) + '/';
+        let resolvedPath = path.resolve(rootDirectory + req.originalUrl);
         if (resolvedPath === rootDirectory + req.originalUrl) {
           next();
         } else {

@@ -47,7 +47,7 @@ class GetLatest {
           files.forEach(file => {
             if (isSemVer(file)) {
               if (versionFound === null) {
-                versionFound === file;
+                versionFound = file;
               } else {
                 versionFound = semVerComparator(versionFound, file) > 0 ? versionFound : file;
               }

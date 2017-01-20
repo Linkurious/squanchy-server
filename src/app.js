@@ -6,6 +6,7 @@
   let path = require('path');
   let https = require('https');
   let fs = require('fs');
+  let path = require('path');
 
   let express = require('express');
   let expressSession = require('express-session');
@@ -48,16 +49,25 @@
 
     let httpApp = express();
 
+    let getLatestService = new getLatest(rootDirectory);
+    httpApp.use(getLatestService.getLatestMiddleware.bind(getLatestService));
+
     if (app.auth) {
       let githubAuthService = new githubAuth(app.auth, app.domain);
 
       httpApp.use(expressSession(sessionOptions));
+      httpApp.use(function checkPathSafety(req, res, next) {
+        // if path.resolve is different from rootDirectory + originalUrl we don't continue
+        let resolvedPath = path.resolve(this.rootDir + req.originalUrl);
+        if (resolvedPath === this.rootDir + req.originalUrl) {
+          next();
+        } else {
+          res.status('400', 'Symlinks are disabled');
+        }
+      });
       httpApp.use('/callback', githubAuthService.authMiddleware.bind(githubAuthService));
       httpApp.use(app.auth.urlPrefix, githubAuthService.authMiddleware.bind(githubAuthService));
     }
-
-    let getLatestService = new getLatest(rootDirectory);
-    httpApp.use(getLatestService.getLatestMiddleware.bind(getLatestService));
 
     httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));
     if (app.directoryListing) {

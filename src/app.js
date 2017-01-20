@@ -56,19 +56,21 @@
       let githubAuthService = new githubAuth(app.auth, app.domain);
 
       httpApp.use(expressSession(sessionOptions));
-      httpApp.use(function checkPathSafety(req, res, next) {
-        // if path.resolve is different from rootDirectory + originalUrl we don't continue
 
+      httpApp.use('/callback', githubAuthService.authMiddleware.bind(githubAuthService));
+      httpApp.use(function checkPathSafety(req, res, next) {
+        // if realPath is different from rootDirectory + originalUrl we don't continue
         rp.realpath(rootDirectory + req.originalUrl, function (err, realPath) {
-          realPath = realPath.replace(/\/$/, '');
-          if (realPath === (rootDirectory + req.originalUrl).replace(/\/$/, '')) {
+          realPath = realPath && realPath.replace(/\/$/, '');
+          let originalPath = (rootDirectory + req.originalUrl);
+          originalPath = originalPath && originalPath.replace(/\/$/, '');
+          if (realPath === originalPath) {
             next();
           } else {
             res.status('400').send('Symlinks are disabled');
           }
         });
       });
-      httpApp.use('/callback', githubAuthService.authMiddleware.bind(githubAuthService));
       httpApp.use(app.auth.urlPrefix, githubAuthService.authMiddleware.bind(githubAuthService));
     }
 

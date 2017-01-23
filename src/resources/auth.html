@@ -17,15 +17,22 @@
         }
       }
 
-      var redirect_uri = getQueryVariable('redirect_uri');
+      window.onload = function() {
+        var redirect_uri = getQueryVariable('redirect_uri');
 
-      if (redirect_uri === undefined || redirect_uri === null) {
-        $('.notAuthorizedDiv').css("display", "block");
-      } else {
-        $('.authenticationButton').click(function() {
-          // redirect to redirect_uri
-        });
-      }
+        if (redirect_uri === undefined || redirect_uri === null) {
+          $('#notAuthorizedDiv').css("display", "block");
+        } else {
+          $('#authenticationButton').css("display", "block");
+
+          // Allow redirect only to Github
+          if (redirect_uri.indexOf('https://github.com/login/oauth/authorize') === 0) {
+            $('#authenticationButton').click(function () {
+              window.location.replace(redirect_uri);
+            });
+          }
+        }
+      };
     </script>
 </head>
 <body>

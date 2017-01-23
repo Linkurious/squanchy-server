@@ -23,7 +23,7 @@
         if (redirect_uri === undefined || redirect_uri === null) {
           $('#notAuthorizedDiv').css("display", "block");
         } else {
-          $('#authenticationButton').css("display", "block");
+          $('#authenticationRequiredDiv').css("display", "block");
 
           // Allow redirect only to Github
           if (redirect_uri.indexOf('https://github.com/login/oauth/authorize') === 0) {

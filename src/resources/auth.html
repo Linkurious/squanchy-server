@@ -3,9 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Authentication required</title>
+    <script src="/resources/jquery-3.1.1.min.js"></script>
+
+    <script type="application/javascript">
+      function getQueryVariable(variable) {
+        var query = window.location.search.substring(1);
+        var vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+          var pair = vars[i].split('=');
+          if (decodeURIComponent(pair[0]) == variable) {
+            return decodeURIComponent(pair[1]);
+          }
+        }
+      }
+
+      var redirect_uri = getQueryVariable('redirect_uri');
+
+      if (redirect_uri === undefined || redirect_uri === null) {
+        $('.notAuthorizedDiv').css("display", "block");
+      } else {
+        $('.authenticationButton').click(function() {
+          // redirect to redirect_uri
+        });
+      }
+    </script>
 </head>
 <body>
-You have to authenticate:
-<input></input>
+<div id="notAuthorizedDiv" style="display: none;">
+    You are not authorized to see this resource, contact us if you should.
+</div>
+<div id="authenticationRequiredDiv" style="display: none;">
+    You have to authenticate via Github to access this resource:
+    <input id="authenticationButton" type="button" value="Go to Github"></input>
+</div>
 </body>
 </html>

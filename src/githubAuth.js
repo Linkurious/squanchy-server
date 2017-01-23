@@ -68,7 +68,8 @@ class GithubAuth {
                   res.redirect(req.session.desiredResource);
                 });
               } else {
-                res.status(403).send("You are not authorized to see this resource");
+                res.redirect('/resources/auth.html');
+                // res.status(403).send("You are not authorized to see this resource");
               }
             });
           });

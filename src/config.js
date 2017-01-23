@@ -9,11 +9,11 @@
   const _ = require('lodash');
 
   const OWNER = config.owner || 'root',
-        ROOT = path.join(OWNER === 'root' ? '/root' : `/home/${OWNER}`, config.nginx_root || 'www'),
-        SSL_DIR = path.join(ROOT, config.ssl_dir || '.ssl'),
-        PORT = config.nginx_starting_port || 8000;
+        ROOT = path.join(OWNER === 'root' ? '/root' : `/home/${OWNER}`, config.nginxRoot || 'www'),
+        SSL_DIR = path.join(ROOT, config.sslDir || '.ssl'),
+        PORT = config.nginxStartingPort || 8000;
 
-  if (typeof config.dns_suffix !== 'string') throw new TypeError('Missing field "dns_suffix" in configuration.');
+  if (typeof config.parentDomain !== 'string') throw new TypeError('Missing field "parentDomain" in configuration.');
   if (typeof config.email !== 'string') throw new TypeError('Missing field "email" in configuration.');
   if (!(config.apps instanceof Array) || !config.apps.length) throw new TypeError('Field "apps" in configuration should be a non-empty array of strings.');
   if (config.apps.indexOf('all') !== -1 ) throw new Error('"add" is a reserved sub-domain name');
@@ -23,8 +23,8 @@
     NGINX_CONFIG_PATH: path.join(ROOT, '.nginx.conf'),
     NGINX_HTTP_PORT: PORT,
     NGINX_HTTPS_PORT: PORT + 1,
-    NGINX_USER: config.nginx_user || 'nginx',
-    ROOT_DOMAIN: config.dns_suffix,
+    NGINX_USER: config.nginxUser || 'nginx',
+    ROOT_DOMAIN: config.parentDomain,
     SSL_ON: config.ssl,
     SSL_DIR: SSL_DIR,
     SSL_CERT_PATH: path.join(SSL_DIR, 'fullchain.pem'),
@@ -32,7 +32,7 @@
     EMAIL: config.email,
     UID: userid.uid(OWNER),
     GID: userid.gid(OWNER),
-    CREDENTIAL_DIR: path.join(ROOT, config.credential_dir || '.credentials'),
+    CREDENTIAL_DIR: path.join(ROOT, config.credentialDir || '.credentials'),
     APPS: _.map(config.apps, app => app.domain),
     APP_LIST: []
   };

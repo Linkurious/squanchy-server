@@ -9,7 +9,7 @@ let request = require('request');
 request = request.defaults({
   json: true,
   headers: {
-    'User-Agent': 'LK Documentation'
+    'User-Agent': 'Squanchy-Server Auth'
   }
 });
 
@@ -23,75 +23,127 @@ class GithubAuth {
     this.domain = domain;
   }
 
-  authMiddleware(req, res, next) {
-    if (req.session.user &&
+  isAuthenticated(req) {
+    return !!(req.session.user &&
         req.session.user.domains &&
-        req.session.user.domains.indexOf(this.domain) !== -1) {
+        req.session.user.domains.indexOf(this.domain) !== -1);
+  }
+
+  checkMembership(accessToken, username, cb) {
+    request.get(`https://api.github.com/teams/${this.teamId}/memberships/${username}`,
+        {qs: {'access_token': accessToken}}, (err, membershipR) => {
+      if (err) {
+        return cb(err);
+      }
+
+      let statusMembership = membershipR.body && membershipR.body.state;
+      cb(null, statusMembership === 'active');
+    });
+  }
+
+  getUsername(accessToken, cb) {
+    request.get('https://api.github.com/user',
+        {qs: {'access_token': accessToken}}, (err, userR) => {
+      if (err) {
+        return cb(err);
+      }
+
+      cb(null, userR.body && userR.body.login);
+    });
+  }
+
+  getAccessToken(code, cb) {
+    request.post({
+      form: {
+        code: code,
+        client_id: this.clientID,
+        client_secret: this.clientSecret,
+        redirect_uri: this.redirectUrl,
+        grant_type: 'authorization_code'
+      },
+      uri: 'https://github.com/login/oauth/access_token'
+    }, (err, accessTokenRes) => {
+      if (err) {
+        return cb(err);
+      }
+
+      cb(null, accessTokenRes.body && accessTokenRes.body.access_token);
+    });
+  }
+
+  authorizeDomainForUser(req, cb) {
+    if (req.session.user === undefined || req.session.user === null) {
+      req.session.user = {
+        domains: []
+      }
+    }
+
+    req.session.user.domains.push(this.domain);
+    req.session.save(cb);
+  }
+
+  createUserSession(req, cb) {
+    let state = Math.random().toString(36);
+    req.session['TwoStageAuth'] = true;
+    req.session.state = state;
+    req.session.desiredResource = req.originalUrl;
+    req.session.save(() => {
+      cb(null, state);
+    });
+  }
+
+  authenticate(state, res) {
+    let parsedAuthUrl = url.parse('https://github.com/login/oauth/authorize', true);
+    parsedAuthUrl.query = _.assign(parsedAuthUrl.query, {
+      'client_id': this.clientID,
+      'response_type': 'code',
+      scope: 'user:email read:org',
+      'redirect_uri': this.redirectUrl,
+      state: state
+    });
+
+    res.redirect('/resources/auth.html?redirect_uri=' +
+        encodeURIComponent(url.format(parsedAuthUrl)));
+  }
+
+  authMiddleware(req, res, next) {
+    if (this.isAuthenticated(req)) {
       next();
     } else if (req.query.code) {
       if (req.session.state !== req.query.state) {
         // something fishy, or more simply someone is not using the right URL
         res.status(400).send("req.session.state !== req.query.state");
       } else {
-        request.post({
-          form: {
-            code: req.query.code,
-            client_id: this.clientID,
-            client_secret: this.clientSecret,
-            redirect_uri: this.redirectUrl,
-            grant_type: 'authorization_code'
-          },
-          uri: 'https://github.com/login/oauth/access_token'
-        }, (err, accessTokenRes) => {
+        this.getAccessToken(req.query.code, (err, accessToken) => {
           if (err) {
             return res.status(400).send(err.message);
           }
 
-          let accessToken = accessTokenRes.body && accessTokenRes.body.access_token;
+          this.getUsername(accessToken, (err, username) => {
+            if (err) {
+              return res.status(400).send(err.message);
+            }
 
-          request.get('https://api.github.com/user',
-              {qs: {'access_token': accessToken}}, (err, userR) => {
-            let username = userR.body && userR.body.login;
+            this.checkMembership(accessToken, username, (err, isMember) => {
+              if (err) {
+                return res.status(400).send(err.message);
+              }
 
-            request.get(`https://api.github.com/teams/${this.teamId}/memberships/${username}`,
-                {qs: {'access_token': accessToken}}, (err, membershipR) => {
-              let statusMembership = membershipR.body && membershipR.body.state;
-              if (statusMembership === 'active') {
-                if (req.session.user === undefined || req.session.user === null) {
-                  req.session.user = {
-                    domains: []
-                  }
-                }
-                req.session.user.domains.push(this.domain);
-
-                req.session.save(() => {
+              if (isMember) {
+                this.authorizeDomainForUser(req, () => {
                   res.redirect(req.session.desiredResource);
                 });
               } else {
                 res.redirect('/resources/auth.html');
-                // res.status(403).send("You are not authorized to see this resource");
               }
             });
           });
         });
       }
     } else {
-      let state = Math.random().toString(36);
-      req.session['TwoStageAuth'] = true;
-      req.session.state = state;
-      req.session.desiredResource = req.originalUrl;
-      req.session.save(() => {
-        let parsedAuthUrl = url.parse('https://github.com/login/oauth/authorize', true);
-        parsedAuthUrl.query = _.assign(parsedAuthUrl.query, {
-          'client_id': this.clientID,
-          'response_type': 'code',
-          scope: 'user:email read:org',
-          'redirect_uri': this.redirectUrl,
-          state: state
-        });
-
-        res.redirect('/resources/auth.html?redirect_uri=' +
-            encodeURIComponent(url.format(parsedAuthUrl)));
+      this.createUserSession(req, (err, state) => {
+        // redirect the user to Github for authorization
+        this.authenticate(state, res);
       });
     }
   }

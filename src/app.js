@@ -77,12 +77,10 @@
       httpApp.use(app.auth.urlPrefix, githubAuthService.authMiddleware.bind(githubAuthService));
     }
 
-    httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));
+    httpApp.use(express.static(rootDirectory, {dotfiles: 'deny'}));
     if (app.directoryListing) {
       httpApp.use('/', serveIndex(rootDirectory, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
     }
-
-    httpApp.use(express.static(rootDirectory, {dotfiles: 'allow'}));
 
     httpApp.listen(port, allowExternalPorts ? undefined : 'localhost');
 

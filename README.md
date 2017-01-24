@@ -39,14 +39,17 @@ The script expects a `config.json` file at the root. This file must contain the 
 * `credentialDir` (optional): indicates the folder on which to store the authorized usernames/passwords for each subdomain. Default: `'.credentials'`.
 * `ssl` (optional): whether to use ssl. Default: `false`.
 
-## Adding, removing, updating and listing users:
+## Create a Github OAuth application
 
-In all cases, "sub-domain" can be `"all"`. User that have access to this sub-domain have access to all sub-domains.
+Create a Github OAuth application is fairly simple:
+- Go to: `https://github.com/settings/developers`, *Register a new application* 
+- Set up as *Authorization callback URL* the full domain followed by the route `/callback`, e.g.: `foo.linkurio.us/callback`
 
-* `node user.js add <username> <sub-domain>`
-* `node user.js del <username> <sub-domain>`
-* `node user.js update <username> <sub-domain>`
-* `node user.js list <sub-domain>`
+## Retrieve the teamId
+
+To retrieve the teamId:
+- Create a personal access token: `https://github.com/settings/tokens`
+- `curl -H "Authorization: token <personal-access-token>" https://api.github.com/orgs/<org-name>/teams`
 
 ## Why this name?
 

@@ -22,7 +22,6 @@
 
   mkdir(C.ROOT);
   mkdir(C.SSL_DIR);
-  mkdir(C.CREDENTIAL_DIR);
 
   // After starting nginx, start an HTTP server for each sub-domain
   initNginx(C.SSL_ON, () => {

@@ -30,8 +30,6 @@
   let serveIndex = require('serve-index');
   // let basicAuth = require('basic-auth');
 
-  const credentials = require('./credentials');
-
   const TEMPLATE_PATH = path.join(__dirname, 'template.html'),
         STYLESHEET_PATH = path.join(__dirname, 'style.css');
 

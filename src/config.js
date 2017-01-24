@@ -32,7 +32,6 @@
     EMAIL: config.email,
     UID: userid.uid(OWNER),
     GID: userid.gid(OWNER),
-    CREDENTIAL_DIR: path.join(ROOT, config.credentialDir || '.credentials'),
     APPS: _.map(config.apps, app => app.domain),
     APP_LIST: []
   };

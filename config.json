@@ -6,6 +6,7 @@
   "apps": [
     {
       "domain": "dev",
+      "name": "Development center",
       "directoryListing": true,
       "auth": {
         "clientID": "<clientID>",
@@ -17,10 +18,7 @@
     },
     {
       "domain": "doc",
-      "directoryListing": false
-    },
-    {
-      "domain": "ogma",
+      "name": "Documentation",
       "directoryListing": false
     }
   ]

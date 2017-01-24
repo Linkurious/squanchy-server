@@ -1,5 +1,6 @@
 /**
- * This file parse the configuration file and exports a formatted object that contain all the data required by other files
+ * This file parse the configuration file and exports a formatted object that contain all
+ * the data required by other files
  */
 
 (function () {
@@ -13,10 +14,18 @@
         SSL_DIR = path.join(ROOT, config.sslDir || '.ssl'),
         PORT = config.nginxStartingPort || 8000;
 
-  if (typeof config.parentDomain !== 'string') throw new TypeError('Missing field "parentDomain" in configuration.');
-  if (typeof config.email !== 'string') throw new TypeError('Missing field "email" in configuration.');
-  if (!(config.apps instanceof Array) || !config.apps.length) throw new TypeError('Field "apps" in configuration should be a non-empty array of strings.');
-  if (config.apps.indexOf('all') !== -1 ) throw new Error('"add" is a reserved sub-domain name');
+  if (typeof config.parentDomain !== 'string') {
+    throw new TypeError('Missing field "parentDomain" in configuration.');
+  }
+  if (typeof config.email !== 'string') {
+    throw new TypeError('Missing field "email" in configuration.');
+  }
+  if (!(config.apps instanceof Array) || !config.apps.length) {
+    throw new TypeError('Field "apps" in configuration should be a non-empty array of strings.');
+  }
+  if (config.apps.indexOf('all') !== -1 ) {
+    throw new Error('"all" is a reserved sub-domain name');
+  }
 
   let C = {
     ROOT: ROOT,
@@ -38,13 +47,15 @@
 
   let apps = config.apps;
 
-  for (var i = 0; i < apps.length; ++i) {
+  for (let i = 0; i < apps.length; ++i) {
     C.APP_LIST.push({
       domain: apps[i].domain,
+      name: apps[i].name,
       port: PORT + 2 + i,
       fullDomain: `${apps[i].domain}.${C.ROOT_DOMAIN}`,
       directoryListing: apps[i].directoryListing,
-      auth: apps[i].auth
+      auth: apps[i].auth,
+      ssl: config.ssl
     })
   }
 

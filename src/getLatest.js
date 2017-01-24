@@ -29,40 +29,44 @@ class GetLatest {
     this.rootDir = rootDir;
   }
 
-  getLatestMiddleware(req, res, next) {
-    let originalUrl = req.originalUrl;
-    let idxLatest = originalUrl.indexOf('latest');
-    if (idxLatest === -1) {
-      next();
-    } else {
-      let pathUpToLatest = originalUrl.slice(0, idxLatest);
-      let pathAfterLatest = originalUrl.slice(idxLatest + 6);
+  /**
+   * @returns {function(*, *, *)}
+   */
+  getMiddleware() {
+    return (req, res, next) => {
+      let originalUrl = req.originalUrl;
+      let idxLatest = originalUrl.indexOf('latest');
+      if (idxLatest === -1) {
+        next();
+      } else {
+        let pathUpToLatest = originalUrl.slice(0, idxLatest);
+        let pathAfterLatest = originalUrl.slice(idxLatest + 6);
 
-      let directoryToCheck = this.rootDir + pathUpToLatest;
+        let directoryToCheck = this.rootDir + pathUpToLatest;
 
-      let versionFound = null;
+        let versionFound = null;
 
-      fs.readdir(directoryToCheck, (err, files) => {
-        if (files) {
-          files.forEach(file => {
-            if (isSemVer(file)) {
-              if (versionFound === null) {
-                versionFound = file;
-              } else {
-                versionFound = semVerComparator(versionFound, file) > 0 ? versionFound : file;
+        fs.readdir(directoryToCheck, (err, files) => {
+          if (files) {
+            files.forEach(file => {
+              if (isSemVer(file)) {
+                if (versionFound === null) {
+                  versionFound = file;
+                } else {
+                  versionFound = semVerComparator(versionFound, file) > 0 ? versionFound : file;
+                }
               }
+            });
+
+            if (versionFound === null) {
+              res.status(404).send('No versions of this resource were found');
+            } else {
+              res.redirect(pathUpToLatest + versionFound + pathAfterLatest);
             }
-          });
-
-          if (versionFound === null) {
-            res.status(404).send('No versions of this resource were found');
-          } else {
-            res.redirect(pathUpToLatest + versionFound + pathAfterLatest);
           }
-        }
-      });
-
-    }
+        });
+      }
+    };
   }
 }
 

@@ -2,88 +2,91 @@
  * This module exports a function that creates a HTTP server that serves files
  */
 
-(function () {
-  let path = require('path');
-  let https = require('https');
-  let fs = require('fs');
-  let rp = require('fs.realpath');
+'use strict';
 
-  let express = require('express');
-  let expressSession = require('express-session');
+const path = require('path');
+const https = require('https');
+const fs = require('fs');
 
-  let sessionStore = require('./sessionStore');
-  let githubAuth = require('./githubAuth');
+const rp = require('fs.realpath');
+const express = require('express');
+const expressSession = require('express-session');
+const serveIndex = require('serve-index');
 
-  let getLatest = require('./getLatest');
+const sessionStore = require('./sessionStore');
+const GithubAuth = require('./githubAuth');
+const GetLatest = require('./getLatest');
+const AuthPage = require('./AuthPage');
 
-  // sessions : use memory store
-  const sessionOptions = {
-    secret: Math.random().toString(36),
-    resave: false,
-    saveUninitialized: true,
-    name: 'dev-center.session',
-    rolling: true,
-    store: new sessionStore(),
-    cookie: { secure: false, httpOnly: false, path: '/', maxAge: null}
-  };
+// sessions : use memory store
+const sessionOptions = {
+  secret: Math.random().toString(36),
+  resave: false,
+  saveUninitialized: true,
+  name: 'squanchy.session',
+  rolling: true,
+  store: new sessionStore(),
+  cookie: { secure: false, httpOnly: false, path: '/', maxAge: null}
+};
 
-  let serveIndex = require('serve-index');
-  // let basicAuth = require('basic-auth');
+const TEMPLATE_PATH = path.join(__dirname, 'template.html');
+const STYLESHEET_PATH = path.join(__dirname, 'style.css');
 
-  const TEMPLATE_PATH = path.join(__dirname, 'template.html'),
-        STYLESHEET_PATH = path.join(__dirname, 'style.css');
+/**
+ * Create a HTTP server
+ * @param {object} app
+ * @param {string} app.domain Subdomain which must be used for authentication
+ * @param {number} app.port Port on which the server must be started
+ * @param {boolean} app.directoryListing Whether to have directory listings
+ * @param {object} app.auth
+ * @param {string} app.name
+ * @param {string} rootDirectory Directory from which to serve the files
+ * @param {boolean} allowExternalPorts If true, the server will only serve files on localhost. Else the files can be accessed from all computers on the network.
+ */
+function app(app, rootDirectory, allowExternalPorts) {
+  const port = app.port;
+  const httpApp = express();
 
-  /**
-   * Create a HTTP server
-   * @param {object} app
-   * @param {string} app.subdomain Subdomain which must be used for authentication
-   * @param {number} app.port Port on which the server must be started
-   * @param {boolean} app.directoryListing Whether to have directory listings
-   * @param {string} rootDirectory Directory from which to serve the files
-   * @param {boolean} allowExternalPorts If true, the server will only serve files on localhost. Else the files can be accessed from all computers on the network.
-   */
-  function app(app, rootDirectory, allowExternalPorts) {
-    var port = app.port;
+  const getLatest = new GetLatest(rootDirectory);
+  httpApp.use(getLatest.getMiddleware());
 
-    let httpApp = express();
+  httpApp.use('/resources', express.static(path.join(__dirname + '/resources'), {dotfiles: 'allow'}));
 
-    let getLatestService = new getLatest(rootDirectory);
-    httpApp.use(getLatestService.getLatestMiddleware.bind(getLatestService));
+  if (app.auth) {
+    const githubAuth = new GithubAuth(app.auth, app.domain);
+    const authPage = new AuthPage(app);
 
-    httpApp.use('/resources', express.static(path.join(__dirname + '/resources'), {dotfiles: 'allow'}));
+    httpApp.use(expressSession(sessionOptions));
 
-    if (app.auth) {
-      let githubAuthService = new githubAuth(app.auth, app.domain);
+    httpApp.get('/auth', authPage.getMiddleware());
 
-      httpApp.use(expressSession(sessionOptions));
+    httpApp.use('/callback', githubAuth.authMiddleware.bind(githubAuth));
+    httpApp.use(function checkPathSafety(req, res, next) {
+      // if realPath is different from rootDirectory + originalUrl we don't continue
 
-      httpApp.use('/callback', githubAuthService.authMiddleware.bind(githubAuthService));
-      httpApp.use(function checkPathSafety(req, res, next) {
-        // if realPath is different from rootDirectory + originalUrl we don't continue
-
-        rp.realpath(rootDirectory + req.originalUrl, function (err, realPath) {
-          realPath = realPath && realPath.replace(/\/$/, '');
-          let originalPath = (rootDirectory + req.originalUrl);
-          originalPath = originalPath && originalPath.replace(/\/$/, '');
-          if (realPath === originalPath) {
-            next();
-          } else {
-            res.status('400').send('Symlinks are disabled');
-          }
-        });
+      rp.realpath(rootDirectory + req.originalUrl, function (err, realPath) {
+        realPath = realPath && realPath.replace(/\/$/, '');
+        let originalPath = (rootDirectory + req.originalUrl);
+        originalPath = originalPath && originalPath.replace(/\/$/, '');
+        if (realPath === originalPath) {
+          next();
+        } else {
+          res.status('400').send('Symlinks are disabled');
+        }
       });
-      httpApp.use(app.auth.urlPrefix, githubAuthService.authMiddleware.bind(githubAuthService));
-    }
-
-    httpApp.use(express.static(rootDirectory, {dotfiles: 'deny'}));
-    if (app.directoryListing) {
-      httpApp.use('/', serveIndex(rootDirectory, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
-    }
-
-    httpApp.listen(port, allowExternalPorts ? undefined : 'localhost');
-
-    console.log(`Serving files from ${rootDirectory} on port ${port}...`);
+    });
+    httpApp.use(app.auth.urlPrefix, githubAuth.authMiddleware.bind(githubAuth));
   }
 
-  module.exports = app;
-})();
+  httpApp.use(express.static(rootDirectory, {dotfiles: 'deny'}));
+  if (app.directoryListing) {
+    httpApp.use('/', serveIndex(rootDirectory, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
+  }
+
+  httpApp.listen(port, allowExternalPorts ? undefined : 'localhost');
+
+  console.log(`Serving files from ${rootDirectory} on port ${port}...`);
+}
+
+module.exports = app;
+

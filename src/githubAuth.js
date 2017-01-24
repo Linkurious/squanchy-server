@@ -102,7 +102,7 @@ class GithubAuth {
       state: state
     });
 
-    res.redirect('/resources/auth.html?redirect_uri=' +
+    res.redirect('/auth?redirect_uri=' +
         encodeURIComponent(url.format(parsedAuthUrl)));
   }
 
@@ -134,7 +134,7 @@ class GithubAuth {
                   res.redirect(req.session.desiredResource);
                 });
               } else {
-                res.redirect('/resources/auth.html');
+                res.redirect('/auth');
               }
             });
           });

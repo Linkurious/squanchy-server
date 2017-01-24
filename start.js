@@ -1,3 +1,5 @@
+'use strict';
+
 (function () {
   const path = require('path');
   const fs = require('fs');
@@ -12,7 +14,7 @@
   }
 
   // Create directories for the nginx user
-  function mkdir(dirPath) {
+  function ensureDirSync(dirPath) {
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath);
     }
@@ -20,16 +22,16 @@
     fs.chownSync(dirPath, C.UID, C.GID);
   }
 
-  mkdir(C.ROOT);
-  mkdir(C.SSL_DIR);
+  ensureDirSync(C.ROOT);
+  ensureDirSync(C.SSL_DIR);
 
   // After starting nginx, start an HTTP server for each sub-domain
   initNginx(C.SSL_ON, () => {
     C.APP_LIST.forEach(app => {
       let rootDir = path.join(C.ROOT, app.domain);
 
-      mkdir(rootDir);
-      startApp(app, rootDir);
+      ensureDirSync(rootDir);
+      startApp(app, rootDir, false);
     });
   });
 })();

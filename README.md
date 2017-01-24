@@ -23,6 +23,7 @@ The script expects a `config.json` file at the root. This file must contain the 
 * `parentDomain` (required): Indicates the "root" domain name that redirects to the machine (e.g: "linkurio.us")
 * `apps` (required): arrays of `app` objects.
 * `app.domain` (required): string that represent the domain to manage. For example, specifying `"foo"` will make so that `foo.linkurio.us` redirects to a specific folder `www/foo`.
+* `app.name` (required): Human readable name of the domain, for page titles.
 * `app.directoryListing` (optional): whether to allow directory listing of a path without an `index.html` file. Default: `false`.
 * `app.auth` (optional): an `auth` object.
 * `app.auth.clientID`: a Github OAuth App client ID.

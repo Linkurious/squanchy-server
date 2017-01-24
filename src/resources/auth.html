@@ -52,6 +52,7 @@
         }
 
         .button {
+            margin: 0 5px;
             display: inline;
             color: #FFF;
             background: #f65565;
@@ -63,6 +64,20 @@
             cursor: pointer;
             text-align: center;
             padding: 5px 10px;
+        }
+
+        .button.white {
+            border: 1px solid #666;
+        }
+
+        .button.white, .button.white * {
+            color: #666;
+            background-color: #f2f2f2;
+        }
+
+        .button a {
+            color: #fff;
+            text-decoration: none;
         }
 
         .button:hover {
@@ -105,8 +120,8 @@
 </head>
 <body>
 <header>
-    <a href="/"><img src="logo-linkurious.png" alt="Linkurious"></a>
-    <h1>Documentation</h1>
+    <a href="//{{fullDomain}}/"><img src="/resources/logo-linkurious.png" alt="Linkurious"></a>
+    <h1>{{name}}</h1>
 </header>
 <div class="main">
     <div id="notAuthorizedDiv" style="/*display: none;*/">
@@ -114,7 +129,11 @@
         You are not authorized to access this resource.<br/>
         <br/>
         If you think you should have access,
-        <a href="mailto:support@linkurio.us">get in touch with us</a>.
+        <a href="mailto:support@linkurio.us">get in touch with us</a>.<br/>
+        <br/>
+        <div class="button">
+            <a href="//{{fullDomain}}/">Cancel</a>
+        </div>
     </div>
     <div id="authenticationRequiredDiv" style="/*display: none;*/">
         <!-- displayed before redirecting to github oauth -->
@@ -124,6 +143,9 @@
         <br/>
         <div class="button" id="authenticationButton">
             Authenticate via GitHub
+        </div>
+        <div class="button white">
+            <a href="//{{fullDomain}}/">Cancel</a>
         </div>
     </div>
 </div>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Authentication required</title>
+
+    <style type="text/css">
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 56px;
+            width: 100%;
+            overflow-x: auto;
+            background-color: #1E1D32;
+            color: #fff;
+            border-bottom: 1px solid #141229;
+            box-shadow: 0px 1px 3px 1px rgba(46, 46, 46, 0.3), inset rgba(255, 255, 255, 0.2) 0 1px 1px;
+        }
+
+        header > a > img {
+            height: 1.2em;
+            margin: 0 10px;
+        }
+
+        header h1 {
+            display: inline;
+            line-height: 56px;
+            font-size: 1.6em;
+            font-weight: normal;
+            letter-spacing: 0.02em;
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        body {
+            font-family: "Helvetica Neue", "Calibri Light", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: 0.02em;
+            color: #313042;
+            background-color: #f2f2f2;
+        }
+
+        div.main > div {
+            border: 1px solid #ddd;
+            width: 600px;
+            margin: 100px auto;
+            padding: 20px;
+            text-align: center;
+            background-color: white;
+        }
+
+        .button {
+            margin: 0 5px;
+            display: inline;
+            color: #FFF;
+            background: #f65565;
+            border: 1px solid #d90c20;
+            font-size: 1em;
+            height: 46px;
+            line-height: 34px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            padding: 5px 10px;
+        }
+
+        .button.white {
+            border: 1px solid #666;
+        }
+
+        .button.white, .button.white * {
+            color: #666;
+            background-color: #f2f2f2;
+        }
+
+        .button a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            /*background: #d90c20;*/
+            /*border: 1px solid #f65565;*/
+            box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12);
+        }
+
+    </style>
+
+    <script type="application/javascript">
+      function getQueryVariable(variable) {
+        var query = window.location.search.substring(1);
+        var vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+          var pair = vars[i].split('=');
+          if (decodeURIComponent(pair[0]) == variable) {
+            return decodeURIComponent(pair[1]);
+          }
+        }
+      }
+
+      window.onload = function() {
+        var redirect_uri = getQueryVariable('redirect_uri');
+
+        if (redirect_uri === undefined || redirect_uri === null) {
+          document.getElementById('notAuthorizedDiv').style.display = 'block';
+        } else {
+          document.getElementById('authenticationRequiredDiv').style.display = 'block';
+
+          // Allow redirect only to Github
+          if (redirect_uri.indexOf('https://github.com/login/oauth/authorize') === 0) {
+            document.getElementById('authenticationButton').addEventListener('click', function() {
+              window.location.replace(redirect_uri);
+            }, false);
+          }
+        }
+      };
+    </script>
+</head>
+<body>
+<header>
+    <a href="//{{fullDomain}}/"><img src="/resources/logo-linkurious.png" alt="Linkurious"></a>
+    <h1>{{name}}</h1>
+</header>
+<div class="main">
+    <div id="notAuthorizedDiv" style="display: none;">
+        <!-- displayed when auth failed -->
+        You are not authorized to access this resource.<br/>
+        <br/>
+        If you think you should have access,
+        <a href="mailto:support@linkurio.us">get in touch with us</a>.<br/>
+        <br/>
+        <div class="button">
+            <a href="//{{fullDomain}}/">Cancel</a>
+        </div>
+    </div>
+    <div id="authenticationRequiredDiv" style="display: none;">
+        <!-- displayed before redirecting to github oauth -->
+        You need to be authenticated to access this resource.<br/>
+        <br/>
+        Please authenticate with your GitHub account.<br/>
+        <br/>
+        <div class="button" id="authenticationButton">
+            Authenticate via GitHub
+        </div>
+        <div class="button white">
+            <a href="//{{fullDomain}}/">Cancel</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

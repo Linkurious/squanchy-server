@@ -1,6 +1,6 @@
 {
-  "name": "dev-center",
-  "version": "0.0.2",
+  "name": "squanchy-server",
+  "version": "0.0.3",
   "description": "Stores builds/docs/artifacts of Linkurious projects",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,18 +9,22 @@
   "license": "CC-BY-NC-3.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Linkurious/dev-center.git"
+    "url": "git+https://github.com/Linkurious/squanchy-server.git"
   },
   "author": "Linkurious",
   "bugs": {
-    "url": "https://github.com/Linkurious/dev-center/issues"
+    "url": "https://github.com/Linkurious/squanchy-server/issues"
   },
-  "homepage": "https://github.com/Linkurious/dev-center#readme",
+  "homepage": "https://github.com/Linkurious/squanchy-server#readme",
   "dependencies": {
     "basic-auth": "^1.0.4",
     "express": "^4.14.0",
+    "express-session": "1.14.1",
     "prompt": "^1.0.0",
     "serve-index": "^1.8.0",
-    "userid": "^0.2.0"
+    "userid": "^0.2.0",
+    "lodash": "4.17.4",
+    "request": "^2.75.0",
+    "fs.realpath": "1.0.0"
   }
 }

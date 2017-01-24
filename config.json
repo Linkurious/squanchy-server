@@ -1,6 +1,25 @@
 {
-  "dns_suffix": "linkurio.us",
+  "parentDomain": "linkurio.us",
   "owner": "linkurious",
   "email": "web@linkurio.us",
-  "apps": ["dev", "ogma"]
+  "ssl": false,
+  "apps": [
+    {
+      "domain": "dev",
+      "name": "Development center",
+      "directoryListing": true,
+      "auth": {
+        "clientID": "<clientID>",
+        "clientSecret": "<clientSecret>",
+        "redirectUrl": "<redirectUrl>",
+        "teamId": 1,
+        "urlPrefix": "/"
+      }
+    },
+    {
+      "domain": "doc",
+      "name": "Documentation",
+      "directoryListing": false
+    }
+  ]
 }

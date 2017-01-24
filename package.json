@@ -9,13 +9,13 @@
   "license": "CC-BY-NC-3.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Linkurious/dev-center.git"
+    "url": "git+https://github.com/Linkurious/squanchy-server.git"
   },
   "author": "Linkurious",
   "bugs": {
-    "url": "https://github.com/Linkurious/dev-center/issues"
+    "url": "https://github.com/Linkurious/squanchy-server/issues"
   },
-  "homepage": "https://github.com/Linkurious/dev-center#readme",
+  "homepage": "https://github.com/Linkurious/squanchy-server#readme",
   "dependencies": {
     "basic-auth": "^1.0.4",
     "express": "^4.14.0",

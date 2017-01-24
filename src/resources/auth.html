@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Authentication required</title>
-    <script src="/resources/jquery-3.1.1.min.js"></script>
 
     <script type="application/javascript">
       function getQueryVariable(variable) {
@@ -21,15 +20,15 @@
         var redirect_uri = getQueryVariable('redirect_uri');
 
         if (redirect_uri === undefined || redirect_uri === null) {
-          $('#notAuthorizedDiv').css("display", "block");
+          document.getElementById('notAuthorizedDiv').style.display = 'block';
         } else {
-          $('#authenticationRequiredDiv').css("display", "block");
+          document.getElementById('authenticationRequiredDiv').style.display = 'block';
 
           // Allow redirect only to Github
           if (redirect_uri.indexOf('https://github.com/login/oauth/authorize') === 0) {
-            $('#authenticationButton').click(function () {
+            document.getElementById('authenticationButton').addEventListener('click', function() {
               window.location.replace(redirect_uri);
-            });
+            }, false);
           }
         }
       };

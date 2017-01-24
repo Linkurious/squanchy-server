@@ -5,7 +5,7 @@ const Store = require('express-session').Store;
 // lk libs
 const CappedQueue = require('./lib/CappedQueue');
 
-const DEFAULT_MAX_LENGTH_QUEUE_2_STAGE_AUTH = 100;
+const DEFAULT_MAX_LENGTH_QUEUE_2_STAGE_AUTH = 1000;
 
 class SessionStore extends Store {
   /**

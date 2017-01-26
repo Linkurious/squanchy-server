@@ -22,7 +22,6 @@
     "express-session": "1.14.1",
     "prompt": "^1.0.0",
     "serve-index": "^1.8.0",
-    "userid": "^0.2.0",
     "lodash": "4.17.4",
     "request": "^2.75.0",
     "fs.realpath": "1.0.0"

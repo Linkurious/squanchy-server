@@ -12,7 +12,7 @@
         "clientID": "<clientID>",
         "clientSecret": "<clientSecret>",
         "redirectUrl": "<redirectUrl>",
-        "teamId": 1,
+        "apiEndpoint": "/teams/1234/memberships/{{username}}",
         "urlPrefix": "/"
       }
     },

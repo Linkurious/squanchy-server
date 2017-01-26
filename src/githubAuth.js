@@ -18,7 +18,7 @@ class GithubAuth {
     this.clientID = auth.clientID;
     this.clientSecret = auth.clientSecret;
     this.redirectUrl = auth.redirectUrl;
-    this.teamId = auth.teamId;
+    this.apiEndpoint = auth.apiEndpoint;
     this.urlPrefix = auth.urlPrefix;
     this.domain = domain;
   }
@@ -30,14 +30,14 @@ class GithubAuth {
   }
 
   checkMembership(accessToken, username, cb) {
-    request.get(`https://api.github.com/teams/${this.teamId}/memberships/${username}`,
-        {qs: {'access_token': accessToken}}, (err, membershipR) => {
+    var apiEndpointPopulated = this.apiEndpoint.replace('{{username}}', username);
+    request.get(`https://api.github.com` + apiEndpointPopulated,
+        {qs: {'access_token': accessToken}}, (err, res) => {
       if (err) {
         return cb(err);
       }
 
-      let statusMembership = membershipR.body && membershipR.body.state;
-      cb(null, statusMembership === 'active');
+      cb(null, [200, 204].indexOf(res.statusCode) >= 0);
     });
   }
 

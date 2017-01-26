@@ -29,7 +29,7 @@ The script expects a `config.json` file at the root. This file must contain the 
 * `app.auth.clientID`: a Github OAuth App client ID.
 * `app.auth.clientSecret`: a Github OAuth App client Secret.
 * `app.auth.redirectUrl`: a Github OAuth App redirectUrl. E.g: `"foo.linkurio.us/callback"`. It has to end with `/callback`.
-* `app.auth.teamId`: the Github team Id allowed to access the protected resource.
+* `app.auth.apiEndpoint`: the Github API GET endpoint to use. It has to contain the string `{{username}}` that will be replaced with an actual username. E.g.: `/teams/1234/memberships/{{username}}`, to check if a given username is member of team `1234`.
 * `app.auth.urlPrefix`: path of the resource protected in this domain. E.g: `/dir/this_is_protected`
 * `email` (required): email address provided to Let's Encrypt.
 * `owner`(optional): user to which the folders must belong. Default: 'root'
@@ -45,12 +45,6 @@ The script expects a `config.json` file at the root. This file must contain the 
 Create a Github OAuth application is fairly simple:
 - Go to: `https://github.com/settings/developers`, *Register a new application* 
 - Set up as *Authorization callback URL* the full domain followed by the route `/callback`, e.g.: `foo.linkurio.us/callback`
-
-## Retrieve the teamId
-
-To retrieve the teamId:
-- Create a personal access token: `https://github.com/settings/tokens`
-- `curl -H "Authorization: token <personal-access-token>" https://api.github.com/orgs/<org-name>/teams`
 
 ## Why this name?
 

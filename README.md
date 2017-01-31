@@ -30,6 +30,7 @@ The script expects a `config.json` file at the root. This file must contain the 
 * `app.auth.clientSecret`: a Github OAuth App client Secret.
 * `app.auth.redirectUrl`: a Github OAuth App redirectUrl. E.g: `"foo.linkurio.us/callback"`. It has to end with `/callback`.
 * `app.auth.apiEndpoint`: the Github API GET endpoint to use. It has to contain the string `{{username}}` that will be replaced with an actual username. E.g.: `/teams/1234/memberships/{{username}}`, to check if a given username is member of team `1234`.
+* `app.auth.alternativeAccessToken`: (optional) alternative access token to authenticate against the `apiEndpoint`.
 * `app.auth.urlPrefix`: path of the resource protected in this domain. E.g: `/dir/this_is_protected`
 * `email` (required): email address provided to Let's Encrypt.
 * `owner`(optional): user to which the folders must belong. Default: 'root'

@@ -20,6 +20,7 @@ class GithubAuth {
     this.redirectUrl = auth.redirectUrl;
     this.apiEndpoint = auth.apiEndpoint;
     this.urlPrefix = auth.urlPrefix;
+    this.alternativeAccessToken = auth.alternativeAccessToken;
     this.domain = domain;
   }
 
@@ -31,8 +32,12 @@ class GithubAuth {
 
   checkMembership(accessToken, username, cb) {
     var apiEndpointPopulated = this.apiEndpoint.replace('{{username}}', username);
+    var tokenToUse = this.alternativeAccessToken !== undefined && this.alternativeAccessToken !== null
+        ? this.alternativeAccessToken
+        : accessToken;
+
     request.get(`https://api.github.com` + apiEndpointPopulated,
-        {qs: {'access_token': accessToken}}, (err, res) => {
+        {qs: {'access_token': tokenToUse}}, (err, res) => {
       if (err) {
         return cb(err);
       }

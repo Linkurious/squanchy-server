@@ -72,7 +72,7 @@ function app(app, rootDirectory, allowExternalPorts) {
         if (realPath === originalPath) {
           next();
         } else {
-          res.status('400').send('Symlinks are disabled');
+          res.status('404');
         }
       });
     });
@@ -82,6 +82,15 @@ function app(app, rootDirectory, allowExternalPorts) {
   httpApp.use(express.static(rootDirectory, {dotfiles: 'deny'}));
   if (app.directoryListing) {
     httpApp.use('/', serveIndex(rootDirectory, {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH}));
+  } else {
+    httpApp.use('/', (req, res, next) => {
+      if (req.headers['accept'] === 'application/json') {
+        return serveIndex(rootDirectory,
+            {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH})(req, res, next);
+      } else {
+        res.status('404');
+      }
+    });
   }
 
   httpApp.listen(port, allowExternalPorts ? undefined : 'localhost');

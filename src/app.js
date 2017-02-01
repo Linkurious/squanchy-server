@@ -73,7 +73,7 @@ function app(app, rootDirectory, allowExternalPorts) {
         if (realPath === originalPath) {
           next();
         } else {
-          NotFoundPage(rootDirectory, req, res);
+          NotFoundPage(req, res); // A symlink exist, but we don't serve symlinks
         }
       });
     });
@@ -89,7 +89,7 @@ function app(app, rootDirectory, allowExternalPorts) {
         return serveIndex(rootDirectory,
             {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH})(req, res, next);
       } else {
-        NotFoundPage(rootDirectory, req, res);
+        NotFoundPage(req, res); // Actual not found content
       }
     });
   }

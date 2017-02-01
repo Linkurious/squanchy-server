@@ -6,24 +6,12 @@
  */
 'use strict';
 
-const fs = require('fs');
-
 /**
- * Respond with the homepage if it exists and replace:
- * //SET-ERROR
- * with
- * error = 404;
+ * If a page is not found redirect to homepage with the originalUrl as querystring parameter
  *
- * @param rootDirectory
  * @param req
  * @param res
  */
-module.exports = (rootDirectory, req, res) => {
-  fs.readFile(rootDirectory + '/index.html', 'utf8', (err, homepage) => {
-    if (err) {
-      res.status(404).send('Not Found');
-    } else {
-      res.status(404).send(homepage.replace('//SET-ERROR', 'error = 404;'));
-    }
-  });
+module.exports = (req, res) => {
+  res.redirect('/?originalUrl=' + req.originalUrl);
 };

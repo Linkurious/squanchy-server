@@ -17,6 +17,7 @@ const sessionStore = require('./sessionStore');
 const GithubAuth = require('./githubAuth');
 const GetLatest = require('./getLatest');
 const AuthPage = require('./AuthPage');
+const NotFoundPage = require('./NotFoundPage');
 
 // sessions : use memory store
 const sessionOptions = {
@@ -72,7 +73,7 @@ function app(app, rootDirectory, allowExternalPorts) {
         if (realPath === originalPath) {
           next();
         } else {
-          res.status('404').send('Not Found');
+          NotFoundPage(rootDirectory, req, res);
         }
       });
     });
@@ -88,7 +89,7 @@ function app(app, rootDirectory, allowExternalPorts) {
         return serveIndex(rootDirectory,
             {icons: true, template: TEMPLATE_PATH, stylesheet: STYLESHEET_PATH})(req, res, next);
       } else {
-        res.status('404').send('Not Found');
+        NotFoundPage(rootDirectory, req, res);
       }
     });
   }

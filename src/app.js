@@ -72,7 +72,9 @@ function app(app, rootDirectory, allowExternalPorts) {
     httpApp.use(function checkPathSafety(req, res, next) {
       // if realPath is different from rootDirectory + originalUrl we don't continue
 
-      rp.realpath(rootDirectory + req.originalUrl.split('?')[0], function (err, realPath) {
+      let pathToCheck = decodeURIComponent(rootDirectory + req.originalUrl.split('?')[0]);
+
+      rp.realpath(pathToCheck, function (err, realPath) {
         realPath = realPath && realPath.replace(/\/$/, '');
         let originalPath = (rootDirectory + req.originalUrl.split('?')[0]);
         originalPath = originalPath && originalPath.replace(/\/$/, '');

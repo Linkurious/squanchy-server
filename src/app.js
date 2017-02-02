@@ -76,9 +76,8 @@ function app(app, rootDirectory, allowExternalPorts) {
 
       rp.realpath(pathToCheck, function (err, realPath) {
         realPath = realPath && realPath.replace(/\/$/, '');
-        let originalPath = (rootDirectory + req.originalUrl.split('?')[0]);
-        originalPath = originalPath && originalPath.replace(/\/$/, '');
-        if (realPath === originalPath) {
+        pathToCheck = pathToCheck && pathToCheck.replace(/\/$/, '');
+        if (realPath === pathToCheck) {
           next();
         } else {
           NotFoundPage(req, res); // A symlink exist, but we don't serve symlinks

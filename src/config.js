@@ -51,6 +51,7 @@
     C.APP_LIST.push({
       domain: apps[i].domain,
       name: apps[i].name,
+      redirect: apps[i].redirect,
       port: PORT + 2 + i,
       fullDomain: `${apps[i].domain}.${C.ROOT_DOMAIN}`,
       directoryListing: apps[i].directoryListing,

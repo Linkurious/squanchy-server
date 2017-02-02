@@ -76,13 +76,15 @@ class GithubAuth {
     });
   }
 
-  authorizeDomainForUser(req, cb) {
+  authorizeDomainForUser(req, username, cb) {
     if (req.session.user === undefined || req.session.user === null) {
       req.session.user = {
+        id: username,
         domains: []
       }
     }
 
+    req.session['TwoStageAuth'] = false;
     req.session.user.domains.push(this.domain);
     req.session.save(cb);
   }
@@ -135,7 +137,7 @@ class GithubAuth {
               }
 
               if (isMember) {
-                this.authorizeDomainForUser(req, () => {
+                this.authorizeDomainForUser(req, username, () => {
                   res.redirect(req.session.desiredResource);
                 });
               } else {

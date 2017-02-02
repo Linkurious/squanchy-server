@@ -48,6 +48,12 @@ function app(app, rootDirectory, allowExternalPorts) {
   const port = app.port;
   const httpApp = express();
 
+  if (app.redirect) {
+    httpApp.use((req, res, next) => {
+      res.redirect(app.redirect + req.originalUrl);
+    });
+  }
+
   const getLatest = new GetLatest(rootDirectory);
   httpApp.use(getLatest.getMiddleware());
 

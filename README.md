@@ -26,6 +26,7 @@ The script expects a `config.json` file at the root. This file must contain the 
 * `app.name` (required): Human readable name of the domain, for page titles.
 * `app.directoryListing` (optional): whether to allow directory listing of a path without an `index.html` file. Default: `false`.
 * `app.auth` (optional): an `auth` object.
+* `app.redirect` (optional): Any request to `app.domain` will be redirected to `app.redirect`.
 * `app.auth.clientID`: a Github OAuth App client ID.
 * `app.auth.clientSecret`: a Github OAuth App client Secret.
 * `app.auth.redirectUrl`: a Github OAuth App redirectUrl. E.g: `"foo.linkurio.us/callback"`. It has to end with `/callback`.

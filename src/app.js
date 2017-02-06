@@ -63,7 +63,7 @@ function app(app, rootDirectory, allowExternalPorts) {
       for (var path in app.symlinks) {
         if (app.symlinks.hasOwnProperty(path)) {
           if (req.originalUrl.indexOf(path) === 0) {
-            return res.redirect(app.symlinks(path));
+            return res.redirect(app.symlinks[path]);
           }
         }
       }

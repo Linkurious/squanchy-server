@@ -56,7 +56,8 @@
       fullDomain: `${apps[i].domain}.${C.ROOT_DOMAIN}`,
       directoryListing: apps[i].directoryListing,
       auth: apps[i].auth,
-      ssl: config.ssl
+      ssl: config.ssl,
+      symlinks: apps[i].symlinks
     })
   }
 

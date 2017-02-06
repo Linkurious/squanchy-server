@@ -33,6 +33,7 @@ The script expects a `config.json` file at the root. This file must contain the 
 * `app.auth.apiEndpoint`: the Github API GET endpoint to use. It has to contain the string `{{username}}` that will be replaced with an actual username. E.g.: `/teams/1234/memberships/{{username}}`, to check if a given username is member of team `1234`.
 * `app.auth.alternativeAccessToken`: (optional) alternative access token to authenticate against the `apiEndpoint`.
 * `app.auth.urlPrefix`: path of the resource protected in this domain. E.g: `/dir/this_is_protected`
+* `app.symlinks` (optional): an object mapping paths to be symlinked to other paths. E.g: `{'/content': '/user-manual/latest'}` 
 * `email` (required): email address provided to Let's Encrypt.
 * `owner`(optional): user to which the folders must belong. Default: 'root'
 * `nginxRoot` (optional): root folder on which all the sub-folders will be created. It indicates a folder in the home directory of the owner. For example, if the specified owner is "linkurious" and the `nginxRoot` is "data", the root folder will be `/home/linkurious/data`. Default: `'www'`.

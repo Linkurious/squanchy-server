@@ -41,6 +41,7 @@ const STYLESHEET_PATH = path.join(__dirname, 'style.css');
  * @param {boolean} app.directoryListing Whether to have directory listings
  * @param {object} app.auth
  * @param {string} app.name
+ * @param {object} app.symlinks
  * @param {string} rootDirectory Directory from which to serve the files
  * @param {boolean} allowExternalPorts If true, the server will only serve files on localhost. Else the files can be accessed from all computers on the network.
  */
@@ -56,6 +57,19 @@ function app(app, rootDirectory, allowExternalPorts) {
 
   const getLatest = new GetLatest(rootDirectory);
   httpApp.use(getLatest.getMiddleware());
+
+  if (app.symlinks) {
+    httpApp.use((req, res, next) => {
+      for (var path in app.symlinks) {
+        if (app.symlinks.hasOwnProperty(path)) {
+          if (req.originalUrl.indexOf(path) === 0) {
+            return res.redirect(app.symlinks(path));
+          }
+        }
+      }
+      next();
+    });
+  }
 
   httpApp.use('/resources', express.static(path.join(__dirname + '/resources'), {dotfiles: 'allow'}));
 

@@ -84,9 +84,9 @@ function app(app, rootDirectory, allowExternalPorts) {
     httpApp.use('/callback', githubAuth.authMiddleware.bind(githubAuth));
 
     httpApp.use(function checkPathSafety(req, res, next) {
-      // if realPath is different from rootDirectory + originalUrl we don't continue
+      // if realPath is different from rootDirectory + url we don't continue
 
-      let pathToCheck = decodeURIComponent(rootDirectory + req.originalUrl.split('?')[0]);
+      let pathToCheck = decodeURIComponent(rootDirectory + req.url.split('?')[0]);
 
       rp.realpath(pathToCheck, function (err, realPath) {
         realPath = realPath && realPath.replace(/\/$/, '');

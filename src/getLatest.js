@@ -61,7 +61,9 @@ class GetLatest {
             if (versionFound === null) {
               res.status(404).send('No versions of this resource were found');
             } else {
-              res.redirect(pathUpToLatest + versionFound + pathAfterLatest);
+              req.url = pathUpToLatest + versionFound + pathAfterLatest;
+
+              next();
             }
           }
         });

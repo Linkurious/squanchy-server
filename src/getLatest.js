@@ -30,9 +30,10 @@ class GetLatest {
   }
 
   /**
+   * @param {string} overrideLatest
    * @returns {function(*, *, *)}
    */
-  getMiddleware() {
+  getMiddleware(overrideLatest) {
     return (req, res, next) => {
       let originalUrl = req.originalUrl;
       let idxLatest = originalUrl.indexOf('latest');
@@ -61,6 +62,10 @@ class GetLatest {
             if (versionFound === null) {
               res.status(404).send('No versions of this resource were found');
             } else {
+              if (overrideLatest) {
+                versionFound = overrideLatest;
+              }
+
               req.url = pathUpToLatest + versionFound + pathAfterLatest;
 
               next();

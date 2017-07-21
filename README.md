@@ -35,12 +35,11 @@ The script expects a `config.json` file at the root. This file must contain the 
 * `app.auth.urlPrefix`: path of the resource protected in this domain. E.g: `/dir/this_is_protected`
 * `app.symlinks` (optional): an object mapping paths to be symlinked to other paths. E.g: `{'/content': '/user-manual/latest'}` 
 * `email` (required): email address provided to Let's Encrypt.
-* `owner`(optional): user to which the folders must belong. Default: 'root'
+* `owner` (optional): user to which the folders must belong. Default: 'root'
 * `nginxRoot` (optional): root folder on which all the sub-folders will be created. It indicates a folder in the home directory of the owner. For example, if the specified owner is "linkurious" and the `nginxRoot` is "data", the root folder will be `/home/linkurious/data`. Default: `'www'`.
 * `nginxUser` (optional): indicates the user that must spawn the Nginx process. If it doesn't exist, it will be created. Default: 'nginx'.
 * `nginxStartingPort` (optional): indicates the first port that can be used by nginx and all internal http servers. The first two ports are used by Nginx for HTTP and HTTPS, and one additional port is used for every app. Default: 8000.
 * `sslDir` (optional): indicates the folder on which to store the ssl certificate and key. Indicates a folder within the root folder. Default: `'.ssl'`.
-* `credentialDir` (optional): indicates the folder on which to store the authorized usernames/passwords for each subdomain. Default: `'.credentials'`.
 * `ssl` (optional): whether to use ssl. Default: `false`.
 
 ## Create a Github OAuth application

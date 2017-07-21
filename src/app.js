@@ -43,9 +43,10 @@ const STYLESHEET_PATH = path.join(__dirname, 'style.css');
  * @param {string} app.name
  * @param {object} app.symlinks
  * @param {string} rootDirectory Directory from which to serve the files
+ * @param {string} overrideLatest Version to set as latest
  * @param {boolean} allowExternalPorts If true, the server will only serve files on localhost. Else the files can be accessed from all computers on the network.
  */
-function app(app, rootDirectory, allowExternalPorts) {
+function app(app, rootDirectory, allowExternalPorts, overrideLatest) {
   const port = app.port;
   const httpApp = express();
 
@@ -56,7 +57,7 @@ function app(app, rootDirectory, allowExternalPorts) {
   }
 
   const getLatest = new GetLatest(rootDirectory);
-  httpApp.use(getLatest.getMiddleware());
+  httpApp.use(getLatest.getMiddleware(overrideLatest));
 
   if (app.symlinks) {
     httpApp.use((req, res, next) => {

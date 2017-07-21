@@ -31,7 +31,7 @@
       let rootDir = path.join(C.ROOT, app.domain);
 
       ensureDirSync(rootDir);
-      startApp(app, rootDir, false);
+      startApp(app, rootDir, false, app.overrideLatest);
     });
   });
 })();

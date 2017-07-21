@@ -57,7 +57,8 @@
       directoryListing: apps[i].directoryListing,
       auth: apps[i].auth,
       ssl: config.ssl,
-      symlinks: apps[i].symlinks
+      symlinks: apps[i].symlinks,
+      overrideLatest: apps[i].overrideLatest
     })
   }
 

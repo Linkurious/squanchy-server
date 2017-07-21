@@ -37,7 +37,8 @@ class GetLatest {
   getMiddleware(overrideLatest) {
     return (req, res, next) => {
       let originalUrl = req.originalUrl;
-      let idxLatest = originalUrl.indexOf('latest');
+      let originalUrlWithoutQS = originalUrl.split("?").shift();
+      let idxLatest = originalUrlWithoutQS.indexOf('latest');
       if (idxLatest === -1) {
         next();
       } else {

@@ -2,6 +2,7 @@
  * Created by francesco on 19/01/17.
  */
 
+const _ = require('lodash');
 const fs = require('fs');
 
 /**
@@ -30,7 +31,7 @@ class GetLatest {
   }
 
   /**
-   * @param {string} overrideLatest
+   * @param {object} overrideLatest Versions to set as latest indexed by project name
    * @returns {function(*, *, *)}
    */
   getMiddleware(overrideLatest) {
@@ -62,9 +63,11 @@ class GetLatest {
             if (versionFound === null) {
               res.status(404).send('No versions of this resource were found');
             } else {
-              if (overrideLatest) {
-                versionFound = overrideLatest;
-              }
+              _.forEach(_.keys(overrideLatest), k => {
+                if (originalUrl.indexOf('/' + k + '/latest') >= 0) {
+                  versionFound = overrideLatest[k];
+                }
+              });
 
               req.url = pathUpToLatest + versionFound + pathAfterLatest;
 

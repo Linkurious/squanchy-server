@@ -43,7 +43,7 @@ const STYLESHEET_PATH = path.join(__dirname, 'style.css');
  * @param {string} app.name
  * @param {object} app.symlinks
  * @param {string} rootDirectory Directory from which to serve the files
- * @param {string} overrideLatest Version to set as latest
+ * @param {object} overrideLatest Versions to set as latest indexed by project name
  * @param {boolean} allowExternalPorts If true, the server will only serve files on localhost. Else the files can be accessed from all computers on the network.
  */
 function app(app, rootDirectory, allowExternalPorts, overrideLatest) {

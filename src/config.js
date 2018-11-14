@@ -3,6 +3,11 @@
  * the data required by other files
  */
 
+function fail(m) {
+  console.error('Error: ' + m);
+  process.exit(1);
+}
+
 (function () {
   const path = require('path');
   const config = require('../config.json');
@@ -15,16 +20,30 @@
         PORT = config.nginxStartingPort || 8000;
 
   if (typeof config.parentDomain !== 'string') {
-    throw new TypeError('Missing field "parentDomain" in configuration.');
+    fail('Missing field "parentDomain" in configuration.');
   }
   if (typeof config.email !== 'string') {
-    throw new TypeError('Missing field "email" in configuration.');
+    fail('Missing field "email" in configuration.');
   }
   if (!(config.apps instanceof Array) || !config.apps.length) {
-    throw new TypeError('Field "apps" in configuration should be a non-empty array of strings.');
+    fail('Field "apps" in configuration should be a non-empty array of strings.');
   }
   if (config.apps.indexOf('all') !== -1 ) {
-    throw new Error('"all" is a reserved sub-domain name');
+    fail('"all" is a reserved sub-domain name');
+  }
+
+  let uid;
+  try {
+    uid = userid.uid(OWNER);
+  } catch(e) {
+    fail(`${e.message} (username: ${OWNER})`);
+  }
+
+  let gid;
+  try {
+    gid = userid.gid(OWNER);
+  } catch(e) {
+    fail(`${e.message} (username: ${OWNER})`);
   }
 
   let C = {
@@ -39,8 +58,8 @@
     SSL_CERT_PATH: path.join(SSL_DIR, 'fullchain.pem'),
     SSL_KEY_PATH: path.join(SSL_DIR, 'privkey.pem'),
     EMAIL: config.email,
-    UID: userid.uid(OWNER),
-    GID: userid.gid(OWNER),
+    UID: uid,
+    GID: gid,
     APPS: _.map(config.apps, app => app.domain),
     APP_LIST: []
   };

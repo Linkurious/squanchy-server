@@ -30,8 +30,17 @@ class GetLatest {
     this.rootDir = rootDir;
   }
 
+  fail(res) {
+    res.status(404).send('No versions of this resource were found');
+  }
+
+  redirectLatest(context, req, next) {
+    req.url = context.pathUpToLatest + context.latest + context.pathAfterLatest;
+    next();
+  }
+
   /**
-   * @param {object} overrideLatest Versions to set as latest indexed by project name
+   * @param {object} overrideLatest Versions to set as latest indexed by folder name
    * @returns {function(*, *, *)}
    */
   getMiddleware(overrideLatest) {
@@ -39,44 +48,40 @@ class GetLatest {
       let originalUrl = req.originalUrl;
       let originalUrlWithoutQS = originalUrl.split("?").shift();
       let idxLatest = originalUrlWithoutQS.indexOf('latest');
+
       if (idxLatest === -1) {
-        next();
-      } else {
-        let pathUpToLatest = originalUrl.slice(0, idxLatest);
-        let pathAfterLatest = originalUrl.slice(idxLatest + 6);
-
-        let directoryToCheck = this.rootDir + pathUpToLatest;
-
-        let versionFound = null;
-
-        fs.readdir(directoryToCheck, (err, files) => {
-          if (files) {
-            files.forEach(file => {
-              if (isSemVer(file)) {
-                if (versionFound === null) {
-                  versionFound = file;
-                } else {
-                  versionFound = semVerComparator(versionFound, file) > 0 ? versionFound : file;
-                }
-              }
-            });
-
-            if (versionFound === null) {
-              res.status(404).send('No versions of this resource were found');
-            } else {
-              _.forEach(_.keys(overrideLatest), k => {
-                if (originalUrl.indexOf('/' + k + '/latest') >= 0) {
-                  versionFound = overrideLatest[k];
-                }
-              });
-
-              req.url = pathUpToLatest + versionFound + pathAfterLatest;
-
-              next();
-            }
-          }
-        });
+        return next();
       }
+
+      let context = {
+        pathUpToLatest: originalUrl.slice(0, idxLatest),
+        pathAfterLatest: originalUrl.slice(idxLatest + 6),
+        latest: null
+      };
+
+      _.forEach(_.keys(overrideLatest), k => {
+        if (originalUrl.indexOf('/' + k + '/latest') >= 0) {
+          context.latest = overrideLatest[k];
+        }
+      });
+      if (context.latest) {
+        return this.redirectLatest(context, req, next)
+      }
+
+      const directoryToCheck = this.rootDir + context.pathUpToLatest;
+      fs.readdir(directoryToCheck, (err, folderNames) => {
+        if (!folderNames) {
+          return this.fail(res);
+        }
+
+        const sortedVersions = folderNames.filter(isSemVer).sort(semVerComparator);
+        context.latest = sortedVersions.length ? sortedVersions[sortedVersions.length - 1] : null;
+        if (!context.latest) {
+          return this.fail(res);
+        }
+
+        this.redirectLatest(context, req, next);
+      });
     };
   }
 }

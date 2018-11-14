@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 'use strict';
 
 (function () {
@@ -18,7 +19,6 @@
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath);
     }
-
     fs.chownSync(dirPath, C.UID, C.GID);
   }
 

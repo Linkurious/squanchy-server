@@ -19,7 +19,12 @@
     {
       "domain": "doc",
       "name": "Documentation",
-      "directoryListing": false
+      "directoryListing": false,
+      "overrideLatest": {
+        "admin-manual": "v2.5.6",
+        "server-sdk": "v2.5.6",
+        "user-manual": "v2.5.6"
+      }
     }
   ]
 }

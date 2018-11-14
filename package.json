@@ -17,13 +17,14 @@
   },
   "homepage": "https://github.com/Linkurious/squanchy-server#readme",
   "dependencies": {
-    "basic-auth": "^1.0.4",
-    "express": "^4.14.0",
-    "express-session": "1.14.1",
-    "prompt": "^1.0.0",
-    "serve-index": "^1.8.0",
+    "basic-auth": "2.0.1",
+    "express": "4.16.4",
+    "express-session": "1.15.6",
+    "fs.realpath": "1.0.0",
     "lodash": "4.17.4",
-    "request": "^2.75.0",
-    "fs.realpath": "1.0.0"
+    "prompt": "1.0.0",
+    "request": "2.88.0",
+    "serve-index": "^1.8.0",
+    "userid": "0.3.1"
   }
 }

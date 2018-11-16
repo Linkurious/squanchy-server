@@ -59,9 +59,9 @@ class GetLatest {
         latest: null
       };
 
-      _.forEach(_.keys(overrideLatest), k => {
-        if (originalUrl.indexOf('/' + k + '/latest') >= 0) {
-          context.latest = overrideLatest[k];
+      _.forEach(_.keys(overrideLatest), folderName => {
+        if (originalUrl.indexOf('/' + folderName + '/latest') >= 0) {
+          context.latest = overrideLatest[folderName];
         }
       });
       if (context.latest) {

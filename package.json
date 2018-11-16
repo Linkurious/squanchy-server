@@ -3,8 +3,8 @@
   "version": "0.0.3",
   "description": "Stores builds/docs/artifacts of Linkurious projects",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node start.js"
+    "test": "jasmine --config=test/jasmine.json",
+    "start": "start.js"
   },
   "license": "CC-BY-NC-3.0",
   "repository": {
@@ -26,5 +26,8 @@
     "request": "2.88.0",
     "serve-index": "^1.8.0",
     "userid": "0.3.1"
+  },
+  "devDependencies": {
+    "jasmine": "3.3.0"
   }
 }

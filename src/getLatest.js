@@ -51,8 +51,8 @@ class GetLatest {
 
       if (idxLatest === -1) {
         // https://github.com/Linkurious/documentation/issues/70
-        // if latest is not found it means it's not the latest documentation
-        // in that case we want to not index it
+        // if "latest" is not found in the url path it means it's a specific version
+        // we don't want specific versions to appear in Google, only latest
         res.set('X-Robots-Tag', 'noindex');
         return next();
       }

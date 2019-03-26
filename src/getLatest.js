@@ -50,6 +50,10 @@ class GetLatest {
       let idxLatest = originalUrlWithoutQS.indexOf('latest');
 
       if (idxLatest === -1) {
+        // https://github.com/Linkurious/documentation/issues/70
+        // if latest is not found it means it's not the latest documentation
+        // in that case we want to not index it
+        res.set('X-Robots-Tag', 'noindex');
         return next();
       }
 

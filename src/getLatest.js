@@ -49,13 +49,16 @@ class GetLatest {
       let originalUrlWithoutQS = originalUrl.split("?").shift();
       let idxLatest = originalUrlWithoutQS.indexOf('latest');
 
-      if (idxLatest === -1 && originalUrl.length > 1) {
+      if (idxLatest === -1) {
         // https://github.com/Linkurious/documentation/issues/70
         // if "latest" is not found in the url path it means it's a specific version
         // we don't want specific versions to appear in Google, only latest
         
         // if originalUrl.length is 1, it's the home page of and we want Google to index it
-        res.set('X-Robots-Tag', 'noindex');
+        if (originalUrl.length > 1) {
+          res.set('X-Robots-Tag', 'noindex');
+        }
+
         return next();
       }
 

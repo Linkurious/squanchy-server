@@ -9,7 +9,8 @@ const https = require('https');
 const fs = require('fs');
 
 const rp = require('fs.realpath');
-const compression = require('compression')
+const compression = require('compression');
+const compressible = require('compressible');
 const express = require('express');
 const expressSession = require('express-session');
 const serveIndex = require('serve-index');

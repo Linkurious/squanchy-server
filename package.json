@@ -18,8 +18,8 @@
   "homepage": "https://github.com/Linkurious/squanchy-server#readme",
   "dependencies": {
     "basic-auth": "2.0.1",
-    "compressible": "^2.0.18",
-    "compression": "^1.7.4",
+    "compressible": "2.0.18",
+    "compression": "1.7.4",
     "express": "4.16.4",
     "express-session": "1.15.6",
     "fs.realpath": "1.0.0",

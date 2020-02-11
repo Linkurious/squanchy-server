@@ -56,13 +56,15 @@ function app(app, rootDirectory, allowExternalPorts, overrideLatest) {
     filter: (req, res) => {
       const type = res.getHeader('Content-Type');
 
-      const isNotCompressible = type === undefined 
+      const isCompressible = type !== undefined 
                           // Gephi files gexf can be compressed.
                           // It is usually disabled as video are already compressed and there's no benefit
-                          || type === 'application/octet-stream' 
-                          || !compressible(type);
+                          && (
+                            type === 'application/octet-stream' 
+                            || compressible(type)
+                          );
       
-      return !isNotCompressible;
+      return isCompressible;
     }
   }));
 

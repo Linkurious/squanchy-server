@@ -9,10 +9,10 @@
       "name": "Development center",
       "directoryListing": true,
       "auth": {
-        "clientID": "<clientID>",
-        "clientSecret": "<clientSecret>",
-        "redirectUrl": "<redirectUrl>",
-        "apiEndpoint": "/teams/1234/memberships/{{username}}",
+        "clientID": "e18e61c6c173011253c8",
+        "clientSecret": "e7cd268ad01f88b024e84501c2a691b39e309b33",
+        "redirectUrl": "https://dev.linkurio.us/callback",
+        "apiEndpoint": "/orgs/Linkurious/memberships/{{username}}",
         "urlPrefix": "/"
       }
     },
@@ -20,6 +20,14 @@
       "domain": "doc",
       "name": "Documentation",
       "directoryListing": false,
+      "auth": {
+        "clientID": "1752360b12892dab9e0e",
+        "clientSecret": "baa6195f77e8fd6dae5ad91650cf90084707c5ed",
+        "redirectUrl": "https://doc.linkurio.us/callback",
+        "apiEndpoint": "/repos/Linkurious/ogma-release/collaborators/{{username}}",
+        "alternativeAccessToken": "037a3942794b7164e5f605ea9d6b9fa129d56d08",
+        "urlPrefix": "/ogma/:version/download.html"
+      },
       "overrideLatest": {
         "admin-manual": "2.8.3",
         "server-sdk": "2.8.3",

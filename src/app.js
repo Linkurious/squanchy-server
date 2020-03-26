@@ -9,6 +9,8 @@ const https = require('https');
 const fs = require('fs');
 
 const rp = require('fs.realpath');
+const compression = require('compression');
+const compressible = require('compressible');
 const express = require('express');
 const expressSession = require('express-session');
 const serveIndex = require('serve-index');
@@ -49,6 +51,22 @@ const STYLESHEET_PATH = path.join(__dirname, 'style.css');
 function app(app, rootDirectory, allowExternalPorts, overrideLatest) {
   const port = app.port;
   const httpApp = express();
+
+  httpApp.use(compression({
+    filter: (req, res) => {
+      const type = res.getHeader('Content-Type');
+
+      const isCompressible = type !== undefined 
+                          // Gephi files gexf can be compressed.
+                          // It is usually disabled as video are already compressed and there's no benefit
+                          && (
+                            type === 'application/octet-stream' 
+                            || compressible(type)
+                          );
+      
+      return isCompressible;
+    }
+  }));
 
   if (app.redirect) {
     httpApp.use((req, res, next) => {

@@ -42,7 +42,8 @@
         "type": "basic",
         "users": {
           "<userName>": "<userPassword>"
-        }
+        },
+        "urlPrefix": "/"
       }
     }
   ]

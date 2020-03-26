@@ -36,25 +36,37 @@ class GithubAuth {
         ? this.alternativeAccessToken
         : accessToken;
 
-    request.get(`https://api.github.com` + apiEndpointPopulated,
-        {qs: {'access_token': tokenToUse}}, (err, res) => {
-      if (err) {
-        return cb(err);
-      }
+    request.get(
+      `https://api.github.com` + apiEndpointPopulated,
+      {
+        qs: {'access_token': tokenToUse},
+        headers: {'Authorization': tokenToUse}
+      },
+      (err, res) => {
+        if (err) {
+          return cb(err);
+        }
 
-      cb(null, [200, 204].indexOf(res.statusCode) >= 0);
-    });
+        cb(null, [200, 204].indexOf(res.statusCode) >= 0);
+      }
+    );
   }
 
   getUsername(accessToken, cb) {
-    request.get('https://api.github.com/user',
-        {qs: {'access_token': accessToken}}, (err, userR) => {
-      if (err) {
-        return cb(err);
-      }
+    request.get(
+      'https://api.github.com/user',
+      {
+        qs: {'access_token': accessToken},
+        headers: {'Authorization': accessToken}
+      },
+      (err, userR) => {
+        if (err) {
+          return cb(err);
+        }
 
-      cb(null, userR.body && userR.body.login);
-    });
+        cb(null, userR.body && userR.body.login);
+      }
+    );
   }
 
   getAccessToken(code, cb) {

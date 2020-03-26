@@ -39,7 +39,7 @@ class GithubAuth {
     request.get(
       `https://api.github.com` + apiEndpointPopulated,
       {
-        qs: {'access_token': tokenToUse},
+        qs: {}, //{'access_token': tokenToUse},
         headers: {'Authorization': tokenToUse}
       },
       (err, res) => {
@@ -56,7 +56,7 @@ class GithubAuth {
     request.get(
       'https://api.github.com/user',
       {
-        qs: {'access_token': accessToken},
+        qs: {}, //{'access_token': accessToken},
         headers: {'Authorization': accessToken}
       },
       (err, userR) => {

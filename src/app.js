@@ -100,7 +100,6 @@ function app(app, rootDirectory, allowExternalPorts, overrideLatest) {
       // HTTP basic auth
       httpApp.use(app.auth.urlPrefix, basicAuth({users: app.auth.users}));
 
-      httpApp.use(app.auth.urlPrefix, );
     } else {
       // GITHUB auth
 

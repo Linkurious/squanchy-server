@@ -14,6 +14,7 @@ const compressible = require('compressible');
 const express = require('express');
 const expressSession = require('express-session');
 const serveIndex = require('serve-index');
+const basicAuth = require('express-basic-auth');
 
 const sessionStore = require('./sessionStore');
 const GithubAuth = require('./githubAuth');
@@ -95,31 +96,40 @@ function app(app, rootDirectory, allowExternalPorts, overrideLatest) {
   httpApp.use('/resources', express.static(path.join(__dirname + '/resources'), {dotfiles: 'allow'}));
 
   if (app.auth) {
-    const githubAuth = new GithubAuth(app.auth, app.domain);
-    const authPage = new AuthPage(app);
+    if (app.auth.type === 'basic') {
+      // HTTP basic auth
+      httpApp.use(app.auth.urlPrefix, basicAuth({users: app.auth.users}));
 
-    httpApp.use(expressSession(sessionOptions));
+      httpApp.use(app.auth.urlPrefix, );
+    } else {
+      // GITHUB auth
 
-    httpApp.get('/auth', authPage.getMiddleware());
+      const githubAuth = new GithubAuth(app.auth, app.domain);
+      const authPage = new AuthPage(app);
 
-    httpApp.use('/callback', githubAuth.authMiddleware.bind(githubAuth));
+      httpApp.use(expressSession(sessionOptions));
 
-    httpApp.use(function checkPathSafety(req, res, next) {
-      // if realPath is different from rootDirectory + url we don't continue
+      httpApp.get('/auth', authPage.getMiddleware());
 
-      let pathToCheck = decodeURIComponent(rootDirectory + req.url.split('?')[0]);
+      httpApp.use('/callback', githubAuth.authMiddleware.bind(githubAuth));
 
-      rp.realpath(pathToCheck, function (err, realPath) {
-        realPath = realPath && realPath.replace(/\/$/, '');
-        pathToCheck = pathToCheck && pathToCheck.replace(/\/$/, '');
-        if (realPath === pathToCheck) {
-          next();
-        } else {
-          NotFoundPage(req, res); // A symlink exist, but we don't serve symlinks
-        }
+      httpApp.use(function checkPathSafety(req, res, next) {
+        // if realPath is different from rootDirectory + url we don't continue
+
+        let pathToCheck = decodeURIComponent(rootDirectory + req.url.split('?')[0]);
+
+        rp.realpath(pathToCheck, function(err, realPath) {
+          realPath = realPath && realPath.replace(/\/$/, '');
+          pathToCheck = pathToCheck && pathToCheck.replace(/\/$/, '');
+          if (realPath === pathToCheck) {
+            next();
+          } else {
+            NotFoundPage(req, res); // A symlink exist, but we don't serve symlinks
+          }
+        });
       });
-    });
-    httpApp.use(app.auth.urlPrefix, githubAuth.authMiddleware.bind(githubAuth));
+      httpApp.use(app.auth.urlPrefix, githubAuth.authMiddleware.bind(githubAuth));
+    }
   }
 
   httpApp.use(express.static(rootDirectory, {dotfiles: 'deny'}));

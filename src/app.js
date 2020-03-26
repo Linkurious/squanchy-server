@@ -98,7 +98,15 @@ function app(app, rootDirectory, allowExternalPorts, overrideLatest) {
   if (app.auth) {
     if (app.auth.type === 'basic') {
       // HTTP basic auth
-      httpApp.use(app.auth.urlPrefix, basicAuth({users: app.auth.users}));
+
+      if (!app.auth.urlPrefix) {
+        app.auth.urlPrefix = '/';
+      }
+      httpApp.use(app.auth.urlPrefix, basicAuth({
+        users: app.auth.users,
+        challenge: true,
+        realm: 'Auth for "' + app.name + '"'
+      }));
 
     } else {
       // GITHUB auth

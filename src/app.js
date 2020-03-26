@@ -105,7 +105,7 @@ function app(app, rootDirectory, allowExternalPorts, overrideLatest) {
       httpApp.use(app.auth.urlPrefix, basicAuth({
         users: app.auth.users,
         challenge: true,
-        realm: 'Auth for "' + app.name + '"'
+        realm: 'Auth for ' + app.name
       }));
 
     } else {

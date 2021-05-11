@@ -23,7 +23,7 @@
     "express": "4.16.4",
     "express-session": "1.15.6",
     "fs.realpath": "1.0.0",
-    "lodash": "4.17.4",
+    "lodash": "4.17.21",
     "prompt": "1.0.0",
     "request": "2.88.0",
     "serve-index": "^1.8.0",

@@ -20,7 +20,7 @@
     "express-basic-auth": "1.2.0",
     "compressible": "2.0.18",
     "compression": "1.7.4",
-    "express": "4.16.4",
+    "express": "4.18.2",
     "express-session": "1.15.6",
     "fs.realpath": "1.0.0",
     "lodash": "4.17.4",
